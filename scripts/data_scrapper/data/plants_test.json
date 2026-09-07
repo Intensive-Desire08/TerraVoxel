@@ -1,0 +1,44 @@
+[
+  {
+    "ecocrop_id": 289,
+    "url": "https://ecocrop.apps.fao.org/ecocrop/srv/en/cropView?id=289",
+    "name": "Abelmoschus esculentus",
+    "fields": {
+      "Authority": "(L.) Moench",
+      "Family": "Magnoliopsida:Dilleniidae:Malvales:Malvaceae",
+      "Synonyms": "Hibiscus esculentus L.",
+      "Common names": "abelmoskus, america-neri, bakhua mun, bamia, bamija, bamya, bandakai, bende', bhindee, bhindi, bindi, bumbo, bunga depros, calulu', cantarella, chaucha turca, dâu bap, Eibisch, frutto d‚ibisco, gobbo, gombaut, gombo, Gombro, haluyoy, huang qiu kui, ibisco, kacang bendi, kacang lender, kembang dapros, ketmie comestible, kopi arab, krachiap man, krachiapkhieo, lady fingers, lady's finger, mesta, ocra, okay, oker, okra, okro, okura, quiabo, quimbambo, quimgombó, quingombo, ramturai, rosenapfel, saluyota bunga, sayur bendi, tori, tuah lek, vendakai, yong kok dau",
+      "Ecocrop code": "289"
+    },
+    "notes_raw": null,
+    "sources_raw": null
+  },
+  {
+    "ecocrop_id": 290,
+    "url": "https://ecocrop.apps.fao.org/ecocrop/srv/en/cropView?id=290",
+    "name": "Abelmoschus manihot",
+    "fields": {
+      "Authority": "(L.) Medic.",
+      "Family": "Magnoliopsida:Dilleniidae:Malvales:Malvaceae",
+      "Synonyms": "Abelmoschus manihot ssp. manihot [(L)]; Medikus, Hibiscus manihot L. (1753)",
+      "Common names": "aibika, baera, bele (Fiji), bush cabbage, bush spinach, island cabbage, neka (Simbo), pele (Tonga, Tuvalu), peli, slipery kabis, slippery cabbage (Solomon Is.)",
+      "Ecocrop code": "290"
+    },
+    "notes_raw": null,
+    "sources_raw": null
+  },
+  {
+    "ecocrop_id": 291,
+    "url": "https://ecocrop.apps.fao.org/ecocrop/srv/en/cropView?id=291",
+    "name": "Abelmoschus moschatus",
+    "fields": {
+      "Authority": "Medic.",
+      "Family": "Magnoliopsida:Dilleniidae:Malvales:Malvaceae",
+      "Synonyms": "Hibiscus abelmoschus L. (1753).",
+      "Common names": "abelmosco, abelmosk, ambreta, ambrette, aukiki, fau ingo, fau tagaloa, fauŒingo, fou ingo, fua samasama, gombo musqué, gongul, graine de musc, gukhia korai, hathongethong, kamang, kamwayang, karereon, karereon nikapwerik nik, kareron, kasturi, kasturi bhenda, kasturi bhendi, kattukasturi, kaŒmang, ketmie musquée, lalkasturika, likonokon, loa, metei, methey, mety, mushkdan, musk mallow, musk okra, muskdana, nikapwerik, oŒeŒe, quiabo cheiroso, rosa almiscarada, setmwechin, sotumo, tropical jewel-hibiscus, vakeke, varttilai kasturi, wakeke, wakewake, wakiwaki, Œaute toga",
+      "Ecocrop code": "291"
+    },
+    "notes_raw": null,
+    "sources_raw": null
+  }
+]
