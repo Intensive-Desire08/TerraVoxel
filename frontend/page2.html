@@ -1,0 +1,536 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TerraVoxel // Parameter Terminal</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Public+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#191c1e",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#e0e3e5",
+            "tertiary": "#000000",
+            "surface": "#f7f9fb",
+            "on-error-container": "#93000a",
+            "surface-dim": "#d8dadc",
+            "outline": "#76777d",
+            "inverse-on-surface": "#eff1f3",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f7f9fb",
+            "on-secondary-container": "#00714d",
+            "on-primary-fixed-variant": "#3f465c",
+            "secondary": "#006c49",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed-variant": "#005236",
+            "primary": "#000000",
+            "inverse-surface": "#2d3133",
+            "background": "#f7f9fb",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#bec6e0",
+            "on-tertiary-fixed-variant": "#005137",
+            "secondary-container": "#6cf8bb",
+            "surface-container-high": "#e6e8ea",
+            "surface-tint": "#565e74",
+            "on-background": "#191c1e",
+            "outline-variant": "#c6c6cd",
+            "primary-container": "#131b2e",
+            "on-surface-variant": "#45464d",
+            "tertiary-container": "#002114",
+            "primary-fixed": "#dae2fd",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#6ffbbe",
+            "on-primary-container": "#7c839b",
+            "inverse-primary": "#bec6e0",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed": "#131b2e",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed": "#002113",
+            "on-tertiary-fixed": "#002114",
+            "surface-container": "#eceef0",
+            "surface-container-highest": "#e0e3e5",
+            "surface-container-low": "#f2f4f6",
+            "tertiary-fixed": "#85f8c4",
+            "tertiary-fixed-dim": "#68dba9",
+            "secondary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#069669",
+            "brand-emerald": "#10B981",
+            "brand-emerald-dark": "#059669",
+            "deep-slate": "#0F172A"
+          },
+          "borderRadius": {
+            "DEFAULT": "0px",
+            "none": "0px",
+            "sm": "2px",
+            "md": "4px",
+            "lg": "4px",
+            "xl": "4px",
+            "full": "0px"
+          },
+          "spacing": {
+            "unit-3": "0.75rem",
+            "grid-gutter": "1.5rem",
+            "unit-16": "4rem",
+            "unit-32": "8rem",
+            "unit-12": "3rem",
+            "unit-1": "0.25rem",
+            "grid-margin": "2rem",
+            "unit-6": "1.5rem",
+            "unit-8": "2rem",
+            "unit-2": "0.5rem",
+            "unit-4": "1rem",
+            "unit-24": "6rem"
+          },
+          "fontFamily": {
+            "label-telemetry": ["JetBrains Mono", "monospace"],
+            "headline-lg": ["Epilogue", "sans-serif"],
+            "headline-md": ["Epilogue", "sans-serif"],
+            "body-md": ["Public Sans", "sans-serif"],
+            "action-cta": ["JetBrains Mono", "monospace"],
+            "body-sm": ["Public Sans", "sans-serif"],
+            "body-lg": ["Public Sans", "sans-serif"],
+            "headline-sm": ["Epilogue", "sans-serif"],
+            "label-code": ["JetBrains Mono", "monospace"]
+          },
+          "fontSize": {
+            "label-telemetry": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+            "headline-lg": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "body-md": ["15px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "action-cta": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-sm": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid background pattern */
+    .bg-grid-slate {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 4px;
+      background: #E2E8F0;
+      border-radius: 0px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 14px;
+      background: #0F172A;
+      border: 2px solid #10B981;
+      cursor: pointer;
+      border-radius: 0px;
+    }
+
+    /* Subtle pulse animation for radar */
+    @keyframes radar-pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.4); opacity: 0.2; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .radar-ring {
+      animation: radar-pulse 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    .radar-ring-delayed {
+      animation: radar-pulse 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite 1.5s;
+    }
+    
+    .sharp-shadow {
+      box-shadow: 4px 4px 0px #0F172A;
+    }
+    .sharp-shadow-sm {
+      box-shadow: 2px 2px 0px #0F172A;
+    }
+  </style>
+</head>
+<body class="bg-[#FAF7F2] text-on-surface font-body-md antialiased overflow-hidden h-screen flex flex-col select-none">
+<!-- TOP APP BAR -->
+<header class="w-full h-14 bg-white border-b border-slate-200 z-50 flex items-center justify-between px-grid-margin shrink-0">
+<div class="flex items-center gap-unit-6">
+<div class="flex items-center gap-unit-2">
+<span class="w-2.5 h-2.5 bg-brand-emerald"></span>
+<span class="font-label-telemetry text-label-telemetry uppercase tracking-widest text-primary font-bold">TERRAVOXEL // GEO-SPATIAL</span>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<!-- Navigation & Step Anchor -->
+<div class="flex items-center gap-unit-4">
+<a class="font-label-telemetry text-label-code text-slate-500 hover:text-black flex items-center gap-1 transition-colors" href="#"><span class="material-symbols-outlined text-[14px]">arrow_back</span><span class="">Return to Page 1</span></a>
+<span class="font-label-telemetry text-label-code text-slate-300">/</span>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 border border-slate-200">
+<span class="w-1.5 h-1.5 rounded-none bg-brand-emerald"></span>
+<span class="font-label-telemetry text-label-code font-semibold text-deep-slate">Stage 02: Parameter Terminal</span>
+</div>
+</div>
+</div>
+<!-- Right HUD Status Items -->
+<div class="flex items-center gap-unit-6">
+<div class="hidden lg:flex items-center gap-unit-4 font-label-telemetry text-label-code text-slate-500">
+<span class="flex items-center gap-1">
+<span class="text-slate-400">SYS_CORE:</span>
+<span class="text-deep-slate font-semibold">TRVX_v2.4</span>
+</span>
+<span class="flex items-center gap-1">
+<span class="text-slate-400">AOI:</span>
+<span class="text-deep-slate font-semibold">41.40338, 2.17403</span>
+</span>
+<span class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-brand-emerald-dark font-semibold">
+<span class="inline-block w-1.5 h-1.5 bg-brand-emerald animate-ping"></span>
+          LEVEL-4 CALIBRATED
+        </span>
+</div>
+<div class="flex items-center gap-unit-2 border-l border-slate-200 pl-unit-4">
+<button class="w-8 h-8 flex items-center justify-center border border-slate-200 hover:border-deep-slate text-deep-slate transition-colors" title="Satellite Calibration">
+<span class="material-symbols-outlined">satellite_alt</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center border border-slate-200 hover:border-deep-slate text-deep-slate transition-colors" title="Settings Terminal">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN VIEWPORT SPLIT (100vh - 56px) -->
+<div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+<!-- LEFT COLUMN: 60% SPATIAL CANVAS -->
+<section class="w-full md:w-[60%] h-full relative bg-slate-900 border-r border-slate-200 overflow-hidden flex flex-col">
+<!-- Top Floating Navigation Toolbar -->
+<div class="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
+<div class="pointer-events-auto bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-2 flex items-center gap-3 sharp-shadow-sm">
+<span class="font-label-telemetry text-label-code text-slate-400 uppercase font-semibold">CAD_SEARCH:</span>
+<div class="flex items-center gap-1.5 text-deep-slate font-label-telemetry text-label-telemetry">
+<span class="material-symbols-outlined text-[16px] text-brand-emerald">search</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 font-label-telemetry text-label-code w-48 text-deep-slate" type="text" value="-03.4653° S, -62.2159° W">
+</div>
+<span class="px-1.5 py-0.5 bg-slate-100 text-[10px] font-label-telemetry text-slate-500 border border-slate-200">ENTER</span>
+</div>
+<div class="pointer-events-auto flex items-center gap-2">
+<div class="bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1.5 flex items-center gap-2 sharp-shadow-sm font-label-telemetry text-label-code text-deep-slate">
+<span class="w-2 h-2 bg-brand-emerald"></span>
+<span class="">VECTOR: SENTINEL-2 NDVI</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</div>
+<button class="bg-deep-slate text-white p-2 border border-deep-slate hover:bg-black transition-colors" title="Layer Toggles">
+<span class="material-symbols-outlined text-[16px]">layers</span>
+</button>
+</div>
+</div>
+<!-- Satellite Spatial Imagery Viewport -->
+<div class="relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden">
+<!-- Background Satellite Texture -->
+<div class="absolute inset-0 bg-cover bg-center opacity-85 scale-105 filter contrast-125" data-alt="An ultra-high-resolution aerial satellite surveillance view of agricultural parcel plots and dense tropical rainforest canopy. The topography displays precision geometric field parcels bisected by waterways and dynamic vegetative density index patterns in realistic deep greens, umber soils, and clinical topographic contour overlay lines. The aesthetic reflects crisp institutional satellite surveillance telemetry under pristine natural lighting." data-location="Amazon Basin, Brazil" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrJtLdD67YUChn7Agmby7h3f3B3YlXBj3CRet1oroGgAXoY2iSTIeY4Jb4EAm8vuhKbKtS2eHKFcuqsT5XCNdjt5UInx7MVnRsLfRxm-hnSUUZaiH8QLEwlXnQoDVaqsdL0I6UhPqokmig1kNM1I6ody26OEoJOdlmlV_QcipiucXdbTqYvNg_OBlUhgRDl4XNrOUsu5MSFsJPClwxxMROdNpGmsJGLOAxOeBbi3F68CHFZuLCugV2Tw');"></div>
+<!-- Geospatial Coordinate Matrix Overlay -->
+<div class="absolute inset-0 pointer-events-none bg-grid-slate opacity-20"></div>
+<!-- Crosshair & Radar Focus -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<!-- Animated Radar Rings -->
+<div class="absolute w-44 h-44 border border-brand-emerald/40 radar-ring"></div>
+<div class="absolute w-44 h-44 border border-brand-emerald/20 radar-ring-delayed"></div>
+<!-- Crosshair Grid Elements -->
+<div class="w-64 h-64 border border-brand-emerald/30 relative flex items-center justify-center">
+<!-- Center Cross Point -->
+<div class="w-4 h-4 relative">
+<div class="absolute top-1/2 left-0 right-0 h-px bg-brand-emerald -translate-y-1/2"></div>
+<div class="absolute left-1/2 top-0 bottom-0 w-px bg-brand-emerald -translate-x-1/2"></div>
+<div class="absolute inset-1 border border-brand-emerald"></div>
+</div>
+<!-- Precision Reticle Ticks -->
+<div class="absolute -top-2 left-1/2 -translate-x-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest">N 00°00.00'</div>
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest">S 00°00.00'</div>
+<div class="absolute top-1/2 -left-3 -translate-y-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest">W</div>
+<div class="absolute top-1/2 -right-3 -translate-y-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest">E</div>
+<!-- Corner Frame Brackets -->
+<div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand-emerald"></div>
+<div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand-emerald"></div>
+<div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand-emerald"></div>
+<div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand-emerald"></div>
+</div>
+</div>
+<!-- Zoom & Viewport Controls -->
+<div class="absolute right-4 bottom-24 flex flex-col gap-1 z-20">
+<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm">+</button>
+<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm">-</button>
+<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm mt-2" title="Reset View">
+<span class="material-symbols-outlined text-[16px]">crop_free</span>
+</button>
+</div>
+<!-- Scale Legend Bar -->
+<div class="absolute right-4 bottom-6 bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1.5 z-20 flex items-center gap-3">
+<div class="w-16 h-1 bg-deep-slate border-b border-t border-white"></div>
+<span class="font-label-telemetry text-label-code text-deep-slate font-semibold">250 METERS</span>
+</div>
+<!-- Bottom-Left Telemetry HUD -->
+<div class="absolute bottom-6 left-6 z-20 w-80 bg-white/90 backdrop-blur-md border border-slate-300 p-4 sharp-shadow">
+<div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-3">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full bg-brand-emerald opacity-75"></span>
+<span class="relative inline-flex h-2 w-2 bg-brand-emerald"></span>
+</span>
+<span class="font-label-telemetry text-[11px] font-bold tracking-wider text-deep-slate uppercase">LIVE TELEMETRY STREAM</span>
+</div>
+<span class="font-label-telemetry text-[10px] text-slate-400">FREQ: 10Hz</span>
+</div>
+<div class="space-y-1.5 font-label-telemetry text-label-code">
+<div class="flex justify-between items-center">
+<span class="text-slate-500">COORDINATES LOCKED:</span>
+<span class="text-deep-slate font-semibold">[-03.4653° S, -62.2159° W]</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500">CADASTRAL ID:</span>
+<span class="text-deep-slate font-semibold">TRVX-7709</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500">AOI:</span>
+<span class="text-brand-emerald-dark font-semibold">AMAZON BASIN POLYGON</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500">ELEVATION:</span>
+<span class="text-deep-slate font-semibold">142.34m MSL</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500">SENSOR:</span>
+<span class="text-deep-slate font-semibold">SENTINEL-2 L2A</span>
+</div>
+</div>
+<div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-label-telemetry text-slate-400">
+<span class="">RES: 0.25M/PX</span>
+<span class="">POLYGON: LOCKED</span>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: 40% PARAMETER TERMINAL -->
+<section class="w-full md:w-[40%] h-full flex flex-col bg-[#F5F2EB] relative overflow-hidden">
+<!-- Terminal Header -->
+<div class="p-6 pb-4 border-b border-slate-200 bg-white/70 backdrop-blur-sm shrink-0"><div class="flex items-center justify-between mb-1"><span class="font-label-telemetry text-label-code text-slate-500 font-semibold tracking-wider">Config Node // Specification</span><span class="font-label-telemetry text-[11px] px-2 py-0.5 bg-[#F2EDE4] text-deep-slate border border-slate-300">Sys v2.4</span></div><h1 class="font-headline-sm text-headline-sm text-deep-slate tracking-tight font-semibold">Parameter Terminal</h1><p class="font-label-telemetry text-label-code text-slate-600 mt-0.5">Configure input attributes for revenue blueprint</p></div>
+<!-- Scrollable Configuration Cards Zone -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6 bg-grid-slate">
+<!-- CARD 1: TERRAIN & CAPACITY -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400"><div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200"><div class="flex items-center gap-2"><span class="w-2 h-2 bg-brand-emerald"></span><h2 class="font-headline-sm text-[16px] text-deep-slate font-semibold">Plot Coordinates</h2></div><span class="font-label-telemetry text-[11px] text-slate-400">Cadastral Lock</span></div><div class="space-y-2"><div><div class="flex justify-between items-center mb-1.5"><label class="font-label-telemetry text-label-code text-slate-700 font-medium" for="plot-coordinates">Plot Coordinates (Latitude, Longitude)</label><span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">my_location</span> GPS Locked</span></div><div class="flex items-center"><div class="relative flex-1"><input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pl-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="plot-coordinates" placeholder="e.g., -03.4653, -62.2159" type="text" value="-03.4653, -62.2159"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">pin_drop</span></div><button class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-deep-slate border-y border-r border-slate-300 font-label-telemetry text-xs flex items-center gap-1" title="Re-center map on coordinates" type="button"><span class="material-symbols-outlined text-[14px]">sync</span><span class="">Sync</span></button></div><p class="font-label-telemetry text-[10px] text-slate-500 mt-1">Cadastral ID: TRVX-7709 // AOI: Amazon Basin Polygon</p></div></div></div><div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Terrain &amp; Capacity</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-slate-400">SEC_01</span>
+</div>
+<div class="space-y-4">
+<!-- Land Area Input -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="land-area">Land Area (Acres)</label>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">RANGE: 1.0 - 100.0</span>
+</div>
+<div class="flex items-center">
+<div class="relative flex-1">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-md text-deep-slate px-3 py-2 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="land-area" max="100" min="1" step="0.5" type="number" value="10.0">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-telemetry text-label-code text-slate-400 bg-slate-100 px-1.5 py-0.5 border border-slate-200">ACRES</span>
+</div>
+<!-- Increment Buttons -->
+<div class="flex flex-col border-y border-r border-slate-300">
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate border-b border-slate-300 text-xs font-label-telemetry" onclick="document.getElementById('land-area').stepUp();" type="button">+</button>
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate text-xs font-label-telemetry" onclick="document.getElementById('land-area').stepDown();" type="button">-</button>
+</div>
+</div>
+</div>
+<!-- Land Status Dropdown -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="land-status">Land Status</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">VEG_INDEX_CALC</span>
+</div>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="land-status">
+<option value="Barren">Barren</option>
+<option selected="" value="Degraded">Degraded</option>
+<option value="Cultivated">Cultivated</option>
+<option value="Fallow">Fallow</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 2: SOIL & HYDROLOGY -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Soil &amp; Hydrology</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-slate-400">SEC_02</span>
+</div>
+<div class="space-y-4">
+<!-- Water Availability -->
+<div>
+<label class="block font-label-telemetry text-label-code text-slate-600 uppercase font-medium mb-1.5" for="water-avail">Water Availability</label>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="water-avail">
+<option selected="" value="Rain-fed">Rain-fed</option>
+<option value="Seasonal Canal">Seasonal Canal</option>
+<option value="Borewell">Borewell</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+<!-- Soil Type -->
+<div>
+<label class="block font-label-telemetry text-label-code text-slate-600 uppercase font-medium mb-1.5" for="soil-type">Soil Type</label>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="soil-type">
+<option selected="" value="Loam">Loam</option>
+<option value="Red">Red</option>
+<option value="Sandy Loam">Sandy Loam</option>
+<option value="Clay Loam">Clay Loam</option>
+<option value="Clay">Clay</option>
+<option value="Alluvial">Alluvial</option>
+<option value="Black">Black</option>
+<option value="Sandy">Sandy</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+<!-- Soil pH with Slider + Number -->
+<div class="pt-1">
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="soil-ph-num">Soil pH Level</label>
+<div class="flex items-center gap-1">
+<span class="text-[10px] font-label-telemetry text-slate-400">ACIDIC</span>
+<span class="text-[10px] font-label-telemetry text-slate-300">---</span>
+<span class="text-[10px] font-label-telemetry text-slate-400">ALKALINE</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="soil-ph-slider" max="8.0" min="5.0" oninput="document.getElementById('soil-ph-num').value = this.value" step="0.1" type="range" value="6.5">
+<input class="w-20 bg-white border border-slate-300 font-label-telemetry text-body-sm text-center py-1.5 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="soil-ph-num" max="8.0" min="5.0" oninput="document.getElementById('soil-ph-slider').value = this.value" step="0.1" type="number" value="6.5">
+</div>
+<div class="flex justify-between text-[10px] font-label-telemetry text-slate-400 mt-1">
+<span class="">5.0 pH</span>
+<span class="text-brand-emerald-dark font-semibold">NEUTRAL (6.5 - 7.0)</span>
+<span class="">8.0 pH</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 3: CLIMATE BASELINE -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Climate Baseline</h2>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 text-brand-emerald-dark text-[10px] font-label-telemetry font-bold">
+<span class="w-1.5 h-1.5 bg-brand-emerald"></span>
+              Manual Entry Mode
+            </div>
+</div>
+<div class="space-y-4">
+<!-- Annual Rainfall -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="rainfall-num">Annual Rainfall (mm)</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">HISTORIC_MET_AVG</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="rainfall-slider" max="2500" min="300" oninput="document.getElementById('rainfall-num').value = this.value" step="10" type="range" value="1240">
+<div class="relative w-28 shrink-0">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-7 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="rainfall-num" max="2500" min="300" oninput="document.getElementById('rainfall-slider').value = this.value" step="10" type="number" value="1240">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">mm</span>
+</div>
+</div>
+</div>
+<!-- Average Temperature -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="temp-num">Average Temperature (°C)</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">SURFACE_THERMAL</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="temp-slider" max="35.0" min="15.0" oninput="document.getElementById('temp-num').value = this.value" step="0.1" type="range" value="24.5">
+<div class="relative w-28 shrink-0">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-7 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="temp-num" max="35.0" min="15.0" oninput="document.getElementById('temp-slider').value = this.value" step="0.1" type="number" value="24.5">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">°C</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FOOTER: THE HANDOFF ACTION -->
+<div class="p-6 pt-4 bg-white border-t border-slate-200 shrink-0">
+<button class="w-full py-3.5 px-4 bg-brand-emerald text-deep-slate font-action-cta text-action-cta font-bold border border-deep-slate transition-all duration-150 sharp-shadow hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:bg-brand-emerald-dark active:text-white flex items-center justify-center gap-2" id="btn-initiate"><span class="">Calculate</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></button>
+<div class="mt-3 flex items-center justify-center gap-2">
+<span class="w-1.5 h-1.5 bg-slate-400"></span>
+<p class="font-label-telemetry text-[10px] text-slate-500 uppercase tracking-tight text-center">Compiles 10-year sequestration matrix • Verra &amp; Gold Standard calibrated</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Notification Banner Mock for Action -->
+<div class="hidden fixed bottom-6 right-6 z-50 bg-deep-slate text-white border-l-4 border-brand-emerald p-4 sharp-shadow max-w-sm" id="toast">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-emerald">check_circle</span>
+<div>
+<p class="font-label-telemetry text-label-telemetry font-bold">CALCULATION MATRIX DISPATCHED</p>
+<p class="font-body-sm text-slate-300 text-xs mt-1">Telemetry parameters verified against Verra VM0042 methodology. Routing to revenue generation model...</p>
+</div>
+</div>
+</div>
+<script>
+    // Micro-interaction for submit action
+    const btn = document.getElementById('btn-initiate');
+    const toast = document.getElementById('toast');
+
+    btn.addEventListener('click', () => {
+      btn.innerText = 'CALCULATING_BIOMASS_DELTA...';
+      btn.classList.add('opacity-80');
+      
+      setTimeout(() => {
+        toast.classList.remove('hidden');
+        btn.innerHTML = `<span>&gt; INITIATE_YIELD_CALCULATION</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
+        btn.classList.remove('opacity-80');
+        
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 5000);
+      }, 900);
+    });
+  </script>
+
+
+</body></html>
