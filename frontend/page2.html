@@ -178,6 +178,9 @@
       box-shadow: 2px 2px 0px #0F172A;
     }
   </style>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body class="bg-[#FAF7F2] text-on-surface font-body-md antialiased overflow-hidden h-screen flex flex-col select-none">
 <!-- TOP APP BAR -->
@@ -190,7 +193,7 @@
 <div class="h-4 w-px bg-slate-200"></div>
 <!-- Navigation & Step Anchor -->
 <div class="flex items-center gap-unit-4">
-<a class="font-label-telemetry text-label-code text-slate-500 hover:text-black flex items-center gap-1 transition-colors" href="#"><span class="material-symbols-outlined text-[14px]">arrow_back</span><span class="">Return to Page 1</span></a>
+<a class="font-label-telemetry text-label-code text-slate-500 hover:text-black flex items-center gap-1 transition-colors" href="page1.html"><span class="material-symbols-outlined text-[14px]">arrow_back</span><span class="">Return to Page 1</span></a>
 <span class="font-label-telemetry text-label-code text-slate-300">/</span>
 <div class="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 border border-slate-200">
 <span class="w-1.5 h-1.5 rounded-none bg-brand-emerald"></span>
@@ -228,31 +231,12 @@
 <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 <!-- LEFT COLUMN: 60% SPATIAL CANVAS -->
 <section class="w-full md:w-[60%] h-full relative bg-slate-900 border-r border-slate-200 overflow-hidden flex flex-col">
-<!-- Top Floating Navigation Toolbar -->
-<div class="absolute top-4 left-4 right-4 z-30 flex items-center justify-between pointer-events-none">
-<div class="pointer-events-auto bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-2 flex items-center gap-3 sharp-shadow-sm">
-<span class="font-label-telemetry text-label-code text-slate-400 uppercase font-semibold">CAD_SEARCH:</span>
-<div class="flex items-center gap-1.5 text-deep-slate font-label-telemetry text-label-telemetry">
-<span class="material-symbols-outlined text-[16px] text-brand-emerald">search</span>
-<input class="bg-transparent border-none p-0 focus:ring-0 font-label-telemetry text-label-code w-48 text-deep-slate" type="text" value="-03.4653° S, -62.2159° W">
-</div>
-<span class="px-1.5 py-0.5 bg-slate-100 text-[10px] font-label-telemetry text-slate-500 border border-slate-200">ENTER</span>
-</div>
-<div class="pointer-events-auto flex items-center gap-2">
-<div class="bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1.5 flex items-center gap-2 sharp-shadow-sm font-label-telemetry text-label-code text-deep-slate">
-<span class="w-2 h-2 bg-brand-emerald"></span>
-<span class="">VECTOR: SENTINEL-2 NDVI</span>
-<span class="material-symbols-outlined text-[14px]">expand_more</span>
-</div>
-<button class="bg-deep-slate text-white p-2 border border-deep-slate hover:bg-black transition-colors" title="Layer Toggles">
-<span class="material-symbols-outlined text-[16px]">layers</span>
-</button>
-</div>
-</div>
 <!-- Satellite Spatial Imagery Viewport -->
 <div class="relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden">
-<!-- Background Satellite Texture -->
-<div class="absolute inset-0 bg-cover bg-center opacity-85 scale-105 filter contrast-125" data-alt="An ultra-high-resolution aerial satellite surveillance view of agricultural parcel plots and dense tropical rainforest canopy. The topography displays precision geometric field parcels bisected by waterways and dynamic vegetative density index patterns in realistic deep greens, umber soils, and clinical topographic contour overlay lines. The aesthetic reflects crisp institutional satellite surveillance telemetry under pristine natural lighting." data-location="Amazon Basin, Brazil" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrJtLdD67YUChn7Agmby7h3f3B3YlXBj3CRet1oroGgAXoY2iSTIeY4Jb4EAm8vuhKbKtS2eHKFcuqsT5XCNdjt5UInx7MVnRsLfRxm-hnSUUZaiH8QLEwlXnQoDVaqsdL0I6UhPqokmig1kNM1I6ody26OEoJOdlmlV_QcipiucXdbTqYvNg_OBlUhgRDl4XNrOUsu5MSFsJPClwxxMROdNpGmsJGLOAxOeBbi3F68CHFZuLCugV2Tw');"></div>
+<!-- Dynamic Leaflet Map Container -->
+<div id="satellite-map" class="absolute inset-0 z-0 opacity-85 filter contrast-125 saturate-150"></div>
+<!-- Static Fallback (if Leaflet fails to load or before init) -->
+<div id="map-fallback" class="absolute inset-0 bg-cover bg-center opacity-85 scale-105 filter contrast-125 z-0 transition-opacity duration-1000" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrJtLdD67YUChn7Agmby7h3f3B3YlXBj3CRet1oroGgAXoY2iSTIeY4Jb4EAm8vuhKbKtS2eHKFcuqsT5XCNdjt5UInx7MVnRsLfRxm-hnSUUZaiH8QLEwlXnQoDVaqsdL0I6UhPqokmig1kNM1I6ody26OEoJOdlmlV_QcipiucXdbTqYvNg_OBlUhgRDl4XNrOUsu5MSFsJPClwxxMROdNpGmsJGLOAxOeBbi3F68CHFZuLCugV2Tw');"></div>
 <!-- Geospatial Coordinate Matrix Overlay -->
 <div class="absolute inset-0 pointer-events-none bg-grid-slate opacity-20"></div>
 <!-- Crosshair & Radar Focus -->
@@ -282,56 +266,13 @@
 </div>
 <!-- Zoom & Viewport Controls -->
 <div class="absolute right-4 bottom-24 flex flex-col gap-1 z-20">
-<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm">+</button>
-<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm">-</button>
-<button class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm mt-2" title="Reset View">
-<span class="material-symbols-outlined text-[16px]">crop_free</span>
+<button id="btn-zoom-in" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm" title="Zoom In">+</button>
+<button id="btn-zoom-out" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm" title="Zoom Out">-</button>
+<button id="btn-recenter" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm mt-2" title="Reset View">
+<span class="material-symbols-outlined text-[16px]">my_location</span>
 </button>
 </div>
-<!-- Scale Legend Bar -->
-<div class="absolute right-4 bottom-6 bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1.5 z-20 flex items-center gap-3">
-<div class="w-16 h-1 bg-deep-slate border-b border-t border-white"></div>
-<span class="font-label-telemetry text-label-code text-deep-slate font-semibold">250 METERS</span>
-</div>
-<!-- Bottom-Left Telemetry HUD -->
-<div class="absolute bottom-6 left-6 z-20 w-80 bg-white/90 backdrop-blur-md border border-slate-300 p-4 sharp-shadow">
-<div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-3">
-<div class="flex items-center gap-2">
-<span class="relative flex h-2 w-2">
-<span class="animate-ping absolute inline-flex h-full w-full bg-brand-emerald opacity-75"></span>
-<span class="relative inline-flex h-2 w-2 bg-brand-emerald"></span>
-</span>
-<span class="font-label-telemetry text-[11px] font-bold tracking-wider text-deep-slate uppercase">LIVE TELEMETRY STREAM</span>
-</div>
-<span class="font-label-telemetry text-[10px] text-slate-400">FREQ: 10Hz</span>
-</div>
-<div class="space-y-1.5 font-label-telemetry text-label-code">
-<div class="flex justify-between items-center">
-<span class="text-slate-500">COORDINATES LOCKED:</span>
-<span class="text-deep-slate font-semibold">[-03.4653° S, -62.2159° W]</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-slate-500">CADASTRAL ID:</span>
-<span class="text-deep-slate font-semibold">TRVX-7709</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-slate-500">AOI:</span>
-<span class="text-brand-emerald-dark font-semibold">AMAZON BASIN POLYGON</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-slate-500">ELEVATION:</span>
-<span class="text-deep-slate font-semibold">142.34m MSL</span>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-slate-500">SENSOR:</span>
-<span class="text-deep-slate font-semibold">SENTINEL-2 L2A</span>
-</div>
-</div>
-<div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-label-telemetry text-slate-400">
-<span class="">RES: 0.25M/PX</span>
-<span class="">POLYGON: LOCKED</span>
-</div>
-</div>
+
 </div>
 </section>
 <!-- RIGHT COLUMN: 40% PARAMETER TERMINAL -->
@@ -341,7 +282,7 @@
 <!-- Scrollable Configuration Cards Zone -->
 <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-grid-slate">
 <!-- CARD 1: TERRAIN & CAPACITY -->
-<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400"><div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200"><div class="flex items-center gap-2"><span class="w-2 h-2 bg-brand-emerald"></span><h2 class="font-headline-sm text-[16px] text-deep-slate font-semibold">Plot Coordinates</h2></div><span class="font-label-telemetry text-[11px] text-slate-400">Cadastral Lock</span></div><div class="space-y-2"><div><div class="flex justify-between items-center mb-1.5"><label class="font-label-telemetry text-label-code text-slate-700 font-medium" for="plot-coordinates">Plot Coordinates (Latitude, Longitude)</label><span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">my_location</span> GPS Locked</span></div><div class="flex items-center"><div class="relative flex-1"><input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pl-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="plot-coordinates" placeholder="e.g., -03.4653, -62.2159" type="text" value="-03.4653, -62.2159"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">pin_drop</span></div><button class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-deep-slate border-y border-r border-slate-300 font-label-telemetry text-xs flex items-center gap-1" title="Re-center map on coordinates" type="button"><span class="material-symbols-outlined text-[14px]">sync</span><span class="">Sync</span></button></div><p class="font-label-telemetry text-[10px] text-slate-500 mt-1">Cadastral ID: TRVX-7709 // AOI: Amazon Basin Polygon</p></div></div></div><div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400"><div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200"><div class="flex items-center gap-2"><span class="w-2 h-2 bg-brand-emerald"></span><h2 class="font-headline-sm text-[16px] text-deep-slate font-semibold">Plot Coordinates</h2></div><span class="font-label-telemetry text-[11px] text-slate-400">Cadastral Lock</span></div><div class="space-y-2"><div><div class="flex justify-between items-center mb-1.5"><label class="font-label-telemetry text-label-code text-slate-700 font-medium flex items-center gap-1 relative group cursor-help w-max" for="plot-coordinates">Plot Coordinates (Latitude, Longitude)<span class="material-symbols-outlined text-[13px] text-slate-400 hover:text-brand-emerald transition-colors">info</span><div class="absolute bottom-full left-0 mb-2 w-64 p-3 bg-deep-slate text-white text-[10px] font-sans shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none border border-slate-700 font-normal leading-relaxed sharp-shadow-sm"><strong class="text-brand-emerald text-[11px] mb-1 block uppercase tracking-wider">How to get coordinates:</strong>1. Open Google Maps<br/>2. Right-click any location on the map<br/>3. Click the lat/lng numbers to copy them<br/>4. Paste them here!<div class="absolute -bottom-1 left-4 w-2.5 h-2.5 bg-deep-slate border-b border-r border-slate-700 transform rotate-45"></div></div></label><span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">my_location</span> GPS Locked</span></div><div class="flex items-center"><div class="relative flex-1"><input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pl-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="plot-coordinates" placeholder="e.g., -03.4653, -62.2159" type="text" value="-03.4653, -62.2159"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">pin_drop</span></div><button class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-deep-slate border-y border-r border-slate-300 font-label-telemetry text-xs flex items-center gap-1" id="btn-sync-coords" title="Re-center map on coordinates" type="button"><span class="material-symbols-outlined text-[14px]">sync</span><span class="">Sync</span></button></div><p class="font-label-telemetry text-[10px] text-slate-500 mt-1">Cadastral ID: TRVX-7709 // AOI: Amazon Basin Polygon</p></div></div></div><div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
 <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
 <div class="flex items-center gap-2">
 <span class="w-2 h-2 bg-deep-slate"></span>
@@ -454,7 +395,7 @@
 <span class="w-2 h-2 bg-deep-slate"></span>
 <h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Climate Baseline</h2>
 </div>
-<div class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 text-brand-emerald-dark text-[10px] font-label-telemetry font-bold">
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 text-brand-emerald-dark text-[10px] font-label-telemetry font-bold" id="climate-mode-badge">
 <span class="w-1.5 h-1.5 bg-brand-emerald"></span>
               Manual Entry Mode
             </div>
@@ -512,6 +453,192 @@
 </div>
 </div>
 <script>
+    // Auto-fetch Climate Data (Rainfall & Temperature) via Open-Meteo API
+    document.addEventListener('DOMContentLoaded', () => {
+      const syncBtn = document.getElementById('btn-sync-coords');
+      const coordsInput = document.getElementById('plot-coordinates');
+      const climateBadge = document.getElementById('climate-mode-badge');
+      const hudCoords = document.getElementById('hud-coords');
+      const rainfallSlider = document.getElementById('rainfall-slider');
+      const rainfallNum = document.getElementById('rainfall-num');
+      const tempSlider = document.getElementById('temp-slider');
+      const tempNum = document.getElementById('temp-num');
+      
+      const toast = document.getElementById('toast');
+      const toastTitle = toast.querySelector('p.font-bold');
+      const toastMsg = toast.querySelector('p.font-body-sm');
+
+      function showToast(title, message, isError = false) {
+        toastTitle.textContent = title;
+        toastMsg.textContent = message;
+        toast.classList.remove('hidden');
+        if (isError) {
+          toast.classList.replace('border-brand-emerald', 'border-red-500');
+          toast.querySelector('.material-symbols-outlined').textContent = 'error';
+          toast.querySelector('.material-symbols-outlined').classList.replace('text-brand-emerald', 'text-red-500');
+        } else {
+          toast.classList.replace('border-red-500', 'border-brand-emerald');
+          toast.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+          toast.querySelector('.material-symbols-outlined').classList.replace('text-red-500', 'text-brand-emerald');
+        }
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      }
+
+      function parseCoordinates(inputStr) {
+        // Extract all valid negative or positive floating point numbers from the string
+        const matches = inputStr.match(/-?\d+(\.\d+)?/g);
+        if (matches && matches.length >= 2) {
+          return { lat: parseFloat(matches[0]), lng: parseFloat(matches[1]) };
+        }
+        return null;
+      }
+
+      // Initialize Leaflet Satellite Map
+      const mapContainer = document.getElementById('satellite-map');
+      let map;
+      let mapMarker;
+      if (mapContainer && typeof L !== 'undefined') {
+        const fallback = document.getElementById('map-fallback');
+        if(fallback) setTimeout(() => fallback.style.opacity = '0', 500);
+        
+        let initialLat = -3.4653;
+        let initialLng = -62.2159;
+        const startCoords = parseCoordinates(coordsInput.value);
+        if(startCoords) {
+           initialLat = startCoords.lat;
+           initialLng = startCoords.lng;
+        }
+
+        map = L.map('satellite-map', {
+          zoomControl: false, 
+          attributionControl: false
+        }).setView([initialLat, initialLng], 14);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19
+        }).addTo(map);
+
+        mapMarker = L.circleMarker([initialLat, initialLng], {
+          radius: 6,
+          fillColor: "#10B981",
+          color: "#047857",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+
+        document.getElementById('btn-zoom-in')?.addEventListener('click', () => map.zoomIn());
+        document.getElementById('btn-zoom-out')?.addEventListener('click', () => map.zoomOut());
+        document.getElementById('btn-recenter')?.addEventListener('click', () => {
+           const currentCoords = parseCoordinates(coordsInput.value);
+           if(currentCoords) map.flyTo([currentCoords.lat, currentCoords.lng], 14, { duration: 1.5 });
+        });
+      }
+
+      function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 4);
+          let currentVal = start + easeProgress * (end - start);
+          
+          if (obj.id.includes('temp')) {
+             obj.value = currentVal.toFixed(1);
+          } else {
+             obj.value = Math.round(currentVal);
+          }
+          
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          } else {
+             if (obj.id.includes('temp')) obj.value = end.toFixed(1);
+             else obj.value = Math.round(end);
+          }
+        };
+        window.requestAnimationFrame(step);
+      }
+
+      async function fetchClimateData(lat, lng) {
+        if(climateBadge) {
+          climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald animate-ping"></span> FETCHING METEOROLOGY...';
+        }
+        
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_mean,precipitation_sum&past_days=90&forecast_days=0`;
+          const response = await fetch(url);
+          
+          if (!response.ok) throw new Error("API Network Error");
+          const data = await response.json();
+          
+          if (data && data.daily) {
+             const temps = data.daily.temperature_2m_mean.filter(v => v !== null);
+             const precip = data.daily.precipitation_sum.filter(v => v !== null);
+             
+             let avgTemp = 24.5;
+             let annualRainfall = 1240;
+             
+             if (temps.length > 0) {
+               avgTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
+             }
+             if (precip.length > 0) {
+               const recentRain = precip.reduce((a, b) => a + b, 0);
+               annualRainfall = recentRain * 4.05; 
+             }
+             
+             if(hudCoords) hudCoords.textContent = `[${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}, ${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}]`;
+             
+             if (rainfallNum && rainfallSlider) {
+                animateValue(rainfallNum, parseFloat(rainfallNum.value), annualRainfall, 800);
+                animateValue(rainfallSlider, parseFloat(rainfallSlider.value), annualRainfall, 800);
+             }
+             if (tempNum && tempSlider) {
+                animateValue(tempNum, parseFloat(tempNum.value), avgTemp, 800);
+                animateValue(tempSlider, parseFloat(tempSlider.value), avgTemp, 800);
+             }
+             
+             if(climateBadge) {
+                climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald"></span> LIVE METEO SYNCHRONIZED';
+             }
+             showToast("TELEMETRY SYNCHRONIZED", `Data updated for ${lat.toFixed(4)}, ${lng.toFixed(4)} using Open-Meteo.`);
+          } else {
+             throw new Error("Invalid payload from Open-Meteo");
+          }
+        } catch (error) {
+          console.error(error);
+          if(climateBadge) {
+             climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald"></span> Manual Entry Mode';
+          }
+          showToast("SYNC ERROR", "Could not fetch telemetry. Check connection or coordinates.", true);
+        }
+      }
+
+      function handleSync() {
+        const val = coordsInput.value;
+        const coords = parseCoordinates(val);
+        if (coords) {
+          if (map) {
+            map.flyTo([coords.lat, coords.lng], 14, { duration: 1.5 });
+            if (mapMarker) {
+              mapMarker.setLatLng([coords.lat, coords.lng]);
+            }
+          }
+          fetchClimateData(coords.lat, coords.lng);
+        } else {
+          showToast("INVALID FORMAT", "Please enter valid Latitude, Longitude", true);
+        }
+      }
+
+      if (syncBtn) {
+        syncBtn.addEventListener('click', handleSync);
+      }
+      if (coordsInput) {
+        coordsInput.addEventListener('keydown', (e) => {
+           if (e.key === 'Enter') handleSync();
+        });
+      }
+    });
+
     // Micro-interaction for submit action
     const btn = document.getElementById('btn-initiate');
     const toast = document.getElementById('toast');
