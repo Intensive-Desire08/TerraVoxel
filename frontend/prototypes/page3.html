@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraVoxel — Polygon Drawer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Paprika&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            paprika: ['Paprika', 'cursive', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            alabaster: '#F8FAFC',
+            slateInk: '#0F172A',
+            slateSec: '#475569',
+            slateMuted: '#94A3B8',
+            emeraldAccent: '#10B981',
+            terracotta: '#D97706',
+            mutedViolet: '#8B5CF6',
+          },
+          boxShadow: {
+            warmSlate: '0 4px 16px rgba(15, 23, 42, 0.10), 0 1px 3px rgba(15, 23, 42, 0.05)',
+            warmSlateLg: '0 12px 32px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06)',
+            emeraldGlow: '0 4px 20px rgba(16, 185, 129, 0.28), 0 2px 8px rgba(16, 185, 129, 0.18)',
+            emeraldHover: '0 6px 24px rgba(16, 185, 129, 0.38), 0 2px 10px rgba(16, 185, 129, 0.22)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Subtle 40x40px slate grid motif */
+    .grid-motif {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+    }
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(14px) saturate(165%);
+      -webkit-backdrop-filter: blur(14px) saturate(165%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+    }
+    .glass-toolbar-item {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      transition: all 0.15s ease-in-out;
+    }
+    .glass-toolbar-item:hover {
+      background: #FFFFFF;
+      border-color: rgba(15, 23, 42, 0.2);
+      transform: translateY(-1px);
+    }
+    .glass-toolbar-item.active {
+      background: #0F172A;
+      color: #FFFFFF;
+      border-color: #0F172A;
+    }
+    /* Pulsing custom SVG node animation */
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.25); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.85; }
+    }
+    .node-pulse {
+      transform-origin: center;
+      animation: pulseRing 2.4s ease-in-out infinite;
+    }
+    /* Crosshair cursor for map canvas */
+    .cursor-trace {
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body class="m-0 p-0 w-screen h-screen overflow-hidden bg-alabaster font-sans text-slateInk select-none relative">
+
+  <!-- ================= MAP BACKGROUND LAYER ================= -->
+  <div class="absolute inset-0 z-0 overflow-hidden bg-slate-900 cursor-trace">
+    <!-- Photorealistic High-Res Satellite Imagery -->
+    <img 
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCODN9R7PMTmvmmIlm9Yb6I4jBEQuSWeqsbnp8EBMovA9Au1n2eUu_TVcQeUpODm8bDPfvXBnUwmb2XsB_z0YNeDjn6olc-JHf0fHveA9YejpnOAGJEjSZtjxdOzivwBoNp_gTpXpq7Q9VYx9_p27E8VIP5n0lJCAe2kULM5lKm6cqXrEr0E7yfeu6l7KKPVi9UMlp8LFrnjsgsKzsAexpr8akYKEQ_n21VN_JWhczk6eEjGkCFv1g" 
+      alt="High-resolution satellite view of agricultural topography and parcel boundaries" 
+      class="w-full h-full object-cover object-center filter brightness-[1.03] contrast-[1.05] saturate-[1.12]"
+    />
+
+    <!-- Sun-drenched overlay tint matching Alabaster Voxel aesthetic -->
+    <div class="absolute inset-0 bg-gradient-to-tr from-amber-100/10 via-transparent to-sky-100/15 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-slate-900/10 pointer-events-none"></div>
+
+    <!-- Interactive Polygon Tracing Vector Overlay (SVG Map Layer) -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
+      <defs>
+        <!-- Voxel hatching pattern inside traced territory -->
+        <pattern id="parcelHatch" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="20" stroke="#10B981" stroke-width="1" stroke-opacity="0.25" />
+        </pattern>
+        <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#10B981" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="vectorShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.35"/>
+        </filter>
+      </defs>
+
+      <!-- Completed Main Drawn Parcel Boundary -->
+      <!-- Points chosen to align organically with field contours on the satellite map -->
+      <polygon 
+        points="720,240 1060,210 1340,310 1420,490 1380,680 1140,820 840,790 690,560 670,390" 
+        fill="url(#parcelHatch)" 
+        fill-opacity="0.75"
+        stroke="#10B981" 
+        stroke-width="2.5" 
+        stroke-linejoin="miter" 
+        stroke-miterlimit="2"
+        filter="url(#vectorShadow)"
+      />
+
+      <!-- Additional highlight fill overlay with soft emerald glow -->
+      <polygon 
+        points="720,240 1060,210 1340,310 1420,490 1380,680 1140,820 840,790 690,560 670,390" 
+        fill="#10B981" 
+        fill-opacity="0.12"
+      />
+
+      <!-- Active Measurement Guidelines / Raycast Edges -->
+      <line x1="720" y1="240" x2="1060" y2="210" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="1060" y1="210" x2="1340" y2="310" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="1340" y1="310" x2="1420" y2="490" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="1420" y1="490" x2="1380" y2="680" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="1380" y1="680" x2="1140" y2="820" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="1140" y1="820" x2="840" y2="790" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="840" y1="790" x2="690" y2="560" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="690" y1="560" x2="670" y2="390" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+      <line x1="670" y1="390" x2="720" y2="240" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.8"/>
+
+      <!-- Vertices / Nodes (Sharp precise square voxels reflecting theme) -->
+      <!-- Node 1 -->
+      <g transform="translate(720, 240)">
+        <circle r="14" fill="url(#nodeGlow)" class="node-pulse" />
+        <rect x="-4.5" y="-4.5" width="9" height="9" fill="#0F172A" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 2 -->
+      <g transform="translate(1060, 210)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 3 -->
+      <g transform="translate(1340, 310)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 4 (Active / Focused Node) -->
+      <g transform="translate(1420, 490)">
+        <circle r="16" fill="url(#nodeGlow)" class="node-pulse" />
+        <rect x="-5" y="-5" width="10" height="10" fill="#10B981" stroke="#FFFFFF" stroke-width="2" rx="1"/>
+        <!-- Coordinate HUD flag on map -->
+        <g transform="translate(16, -26)">
+          <rect width="112" height="24" rx="2" fill="#0F172A" fill-opacity="0.9"/>
+          <text x="8" y="16" fill="#FFFFFF" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="500">45°18'22"N • #04</text>
+        </g>
+      </g>
+      <!-- Node 5 -->
+      <g transform="translate(1380, 680)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 6 -->
+      <g transform="translate(1140, 820)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 7 -->
+      <g transform="translate(840, 790)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 8 -->
+      <g transform="translate(690, 560)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+      <!-- Node 9 -->
+      <g transform="translate(670, 390)">
+        <rect x="-4" y="-4" width="8" height="8" fill="#FFFFFF" stroke="#10B981" stroke-width="2" rx="1"/>
+      </g>
+
+      <!-- Center of Mass Parcel Marker -->
+      <g transform="translate(1050, 490)">
+        <circle r="22" fill="#FFFFFF" fill-opacity="0.85" filter="url(#vectorShadow)"/>
+        <circle r="4" fill="#10B981"/>
+        <text x="28" y="5" fill="#0F172A" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700" letter-spacing="0.5">PARCEL-ALPHA</text>
+        <text x="28" y="19" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="500">12.45 HA // 30.76 AC</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ================= TOP HUD NAVIGATION STRIP ================= -->
+  <header class="absolute top-6 left-6 right-6 z-30 flex items-center justify-between pointer-events-none">
+    <!-- Left: Spatial Breadcrumb -->
+    <div class="pointer-events-auto flex items-center space-x-3 glass-panel px-4 py-2 rounded-[4px] shadow-warmSlate border border-white/90">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-[1px] bg-emeraldAccent"></span>
+        <span class="font-mono text-xs font-semibold text-slateInk tracking-wider uppercase">WORKSPACE</span>
+      </div>
+      <span class="text-slateMuted text-xs">/</span>
+      <span class="font-mono text-xs text-slateSec font-medium">CADASTRE-FR-8402</span>
+      <span class="text-slateMuted text-xs">/</span>
+      <span class="font-mono text-xs text-emeraldAccent font-semibold bg-emeraldAccent/10 px-2 py-0.5 rounded-[2px]">PARCEL TRACER</span>
+    </div>
+
+    <!-- Center: Sun/Voxel Render Mode Toggle -->
+    <div class="pointer-events-auto hidden md:flex items-center space-x-1 glass-panel px-1.5 py-1.5 rounded-[4px] shadow-warmSlate">
+      <button class="px-3 py-1 font-mono text-[11px] font-semibold text-slateInk bg-white rounded-[2px] shadow-sm flex items-center space-x-1.5">
+        <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+        </svg>
+        <span>VOXEL SUN (6500K)</span>
+      </button>
+      <button class="px-3 py-1 font-mono text-[11px] font-medium text-slateSec hover:text-slateInk transition-colors flex items-center space-x-1.5">
+        <svg class="w-3.5 h-3.5 text-slateMuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+        <span>TOPOGRAPHY DEM</span>
+      </button>
+      <button class="px-3 py-1 font-mono text-[11px] font-medium text-slateSec hover:text-slateInk transition-colors flex items-center space-x-1.5">
+        <svg class="w-3.5 h-3.5 text-slateMuted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <span>HYBRID CADASTRE</span>
+      </button>
+    </div>
+
+    <!-- Right: Telemetry & User Terminal Badge -->
+    <div class="pointer-events-auto flex items-center space-x-3">
+      <div class="glass-panel px-3.5 py-1.5 rounded-[4px] shadow-warmSlate flex items-center space-x-3 font-mono text-xs">
+        <div class="flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emeraldAccent animate-ping"></span>
+          <span class="text-slateInk font-semibold">GPS FIX: RTK-L1/L2</span>
+        </div>
+        <span class="text-slateMuted">|</span>
+        <span class="text-slateSec font-medium">PRECISION: <span class="text-slateInk font-semibold">±1.2cm</span></span>
+      </div>
+
+      <div class="glass-panel w-9 h-9 rounded-[4px] shadow-warmSlate flex items-center justify-center text-slateInk hover:bg-white transition-colors cursor-pointer border border-white/90">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= FLOATING GLASSMORPHIC SIDEBAR ================= -->
+  <aside class="absolute top-20 bottom-6 left-6 z-20 w-[360px] glass-panel grid-motif rounded-[6px] shadow-warmSlateLg flex flex-col justify-between p-6 border border-white/90 overflow-hidden">
+    
+    <!-- Top Content Group -->
+    <div class="flex flex-col space-y-5">
+      
+      <!-- 1. Header: TerraVoxel Branding & Project ID -->
+      <div class="border-b border-slate-900/10 pb-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <!-- Voxel Logo Mark -->
+            <div class="w-8 h-8 rounded-[4px] bg-slateInk flex items-center justify-center shadow-md relative overflow-hidden group">
+              <div class="absolute inset-0 bg-gradient-to-br from-emeraldAccent/40 to-transparent"></div>
+              <svg class="w-4 h-4 text-white relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="font-paprika text-xl font-bold tracking-tight text-slateInk leading-none">TerraVoxel</h1>
+              <span class="font-mono text-[10px] uppercase font-semibold text-slateMuted tracking-wider">Spatial Quantitative Core</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="inline-block font-mono text-[11px] font-bold text-slateSec bg-white/90 px-2 py-0.5 rounded-[2px] border border-slate-900/10 shadow-xs">
+              PROJ-2024-01
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Instructions -->
+      <div>
+        <p class="text-[13px] text-slateSec leading-relaxed font-sans">
+          Click on the satellite terrain to place boundary nodes. Trace your land perimeter with millimeter precision to compute volume and prepare 3D voxelization.
+        </p>
+      </div>
+
+      <!-- 3. Drawing Toolbar (Row of small geometric buttons) -->
+      <div>
+        <label class="block font-mono text-[10px] font-bold uppercase tracking-wider text-slateMuted mb-2">
+          Tracing Instruments
+        </label>
+        <div class="grid grid-cols-4 gap-1.5">
+          <!-- Button: Draw Polygon (Active State) -->
+          <button 
+            title="Draw Polygon Mode" 
+            class="glass-toolbar-item active h-12 flex flex-col items-center justify-center rounded-[4px] p-1.5 group cursor-pointer"
+          >
+            <svg class="w-4 h-4 mb-1 text-emeraldAccent group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span class="font-paprika text-[9px] font-medium leading-none text-white tracking-tight">Draw Poly</span>
+          </button>
+
+          <!-- Button: Undo Last Point -->
+          <button 
+            title="Undo Last Point" 
+            class="glass-toolbar-item h-12 flex flex-col items-center justify-center rounded-[4px] p-1.5 text-slateSec group cursor-pointer"
+          >
+            <svg class="w-4 h-4 mb-1 text-slateInk group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a5 5 0 015 5v2m-15-7l4-4m-4 4l4 4" />
+            </svg>
+            <span class="font-paprika text-[9px] font-medium leading-none text-slateInk tracking-tight">Undo Node</span>
+          </button>
+
+          <!-- Button: Clear Shape -->
+          <button 
+            title="Clear Shape" 
+            class="glass-toolbar-item h-12 flex flex-col items-center justify-center rounded-[4px] p-1.5 text-slateSec group cursor-pointer"
+          >
+            <svg class="w-4 h-4 mb-1 text-terracotta group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span class="font-paprika text-[9px] font-medium leading-none text-slateInk tracking-tight">Clear</span>
+          </button>
+
+          <!-- Button: Center Map -->
+          <button 
+            title="Center Map" 
+            class="glass-toolbar-item h-12 flex flex-col items-center justify-center rounded-[4px] p-1.5 text-slateSec group cursor-pointer"
+          >
+            <svg class="w-4 h-4 mb-1 text-mutedViolet group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m0 14v1m8-8h-1M5 12H4m14.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span class="font-paprika text-[9px] font-medium leading-none text-slateInk tracking-tight">Center</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Live Metrics Card (White Background, Raised, Institutional) -->
+      <div class="bg-white rounded-[4px] p-4 shadow-warmSlate border border-slate-900/5 relative overflow-hidden">
+        <!-- Top accent indicator -->
+        <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-mutedViolet via-emeraldAccent to-terracotta"></div>
+        
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-[1px] bg-mutedViolet"></span>
+            <span class="font-mono text-[11px] font-bold text-slateInk uppercase tracking-wider">Live Metrics</span>
+          </div>
+          <!-- Real-time calculation ping -->
+          <span class="font-mono text-[10px] text-emeraldAccent font-semibold flex items-center space-x-1">
+            <span class="w-1 h-1 rounded-full bg-emeraldAccent animate-pulse"></span>
+            <span>SYNCED</span>
+          </span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Area in Hectares (Muted Purple / Violet Accent) -->
+          <div class="flex items-baseline justify-between border-b border-slate-100 pb-2">
+            <span class="text-xs font-medium text-slateSec">Area (Metric)</span>
+            <div class="text-right">
+              <span class="font-mono text-xl font-bold text-mutedViolet tracking-tight">12.45</span>
+              <span class="font-mono text-xs font-semibold text-slateMuted ml-1">HA</span>
+            </div>
+          </div>
+
+          <!-- Area in Acres (Terracotta Accent) -->
+          <div class="flex items-baseline justify-between border-b border-slate-100 pb-2">
+            <span class="text-xs font-medium text-slateSec">Area (Imperial)</span>
+            <div class="text-right">
+              <span class="font-mono text-base font-bold text-slateInk tracking-tight">30.76</span>
+              <span class="font-mono text-xs font-semibold text-slateMuted ml-1">AC</span>
+            </div>
+          </div>
+
+          <!-- Perimeter & Vertex Count -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div class="bg-slate-50 p-2 rounded-[2px] border border-slate-100">
+              <span class="block font-mono text-[10px] text-slateMuted uppercase font-semibold">Nodes</span>
+              <span class="font-mono text-sm font-bold text-slateInk">14 pts</span>
+            </div>
+            <div class="bg-slate-50 p-2 rounded-[2px] border border-slate-100">
+              <span class="block font-mono text-[10px] text-slateMuted uppercase font-semibold">Perimeter</span>
+              <span class="font-mono text-sm font-bold text-slateInk">1,628 m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Validation Badge (Pill-shaped badge: Emerald background, white text) -->
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-[11px] font-medium text-slateSec">Topology Integrity</span>
+          <div class="inline-flex items-center space-x-1.5 bg-emeraldAccent px-3 py-1 rounded-full text-white shadow-sm">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="font-mono text-[11px] font-bold tracking-tight uppercase">Polygon Valid</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Technical Metadata Accordion / Data Grid -->
+      <div class="bg-white/60 rounded-[4px] p-3 border border-white/90 text-[11px] space-y-1.5 font-mono">
+        <div class="flex justify-between text-slateSec">
+          <span>COORDINATE REF:</span>
+          <span class="font-bold text-slateInk">WGS84 / UTM 31N</span>
+        </div>
+        <div class="flex justify-between text-slateSec">
+          <span>GROUND SAMPLING:</span>
+          <span class="font-bold text-slateInk">0.15 m/px</span>
+        </div>
+        <div class="flex justify-between text-slateSec">
+          <span>ELEVATION BASE:</span>
+          <span class="font-bold text-terracotta">+248.4 m MSL</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Action Group: Large CTA Spanning Full Width -->
+    <div class="pt-4 border-t border-slate-900/10">
+      <div class="mb-2 flex items-center justify-between text-[11px] font-mono text-slateMuted">
+        <span>VOXEL ENGINE: READY</span>
+        <span>LATENCY: 18ms</span>
+      </div>
+      <!-- Large Prominent Emerald CTA with Paprika Font & Soft Emerald Glow -->
+      <button class="w-full h-12 bg-emeraldAccent hover:bg-[#0ea372] active:scale-[0.99] text-white font-paprika text-base font-bold rounded-[4px] shadow-emeraldGlow hover:shadow-emeraldHover transition-all flex items-center justify-center space-x-2.5 cursor-pointer border border-emerald-400/50">
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+        </svg>
+        <span>Generate 3D Scene</span>
+        <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ================= FLOATING MAP UTILITY HUD (Right Edge) ================= -->
+  <aside class="absolute top-20 right-6 z-20 flex flex-col space-y-3 pointer-events-auto">
+    <!-- Zoom & Navigation Glass Controls -->
+    <div class="glass-panel p-1 rounded-[4px] shadow-warmSlate border border-white/90 flex flex-col space-y-1">
+      <button title="Zoom In" class="w-8 h-8 rounded-[2px] bg-white/90 hover:bg-white text-slateInk flex items-center justify-center font-mono font-bold text-sm shadow-xs transition-colors">
+        +
+      </button>
+      <div class="h-[1px] bg-slate-900/10 mx-1"></div>
+      <button title="Zoom Out" class="w-8 h-8 rounded-[2px] bg-white/90 hover:bg-white text-slateInk flex items-center justify-center font-mono font-bold text-sm shadow-xs transition-colors">
+        −
+      </button>
+      <div class="h-[1px] bg-slate-900/10 mx-1"></div>
+      <button title="Compass North" class="w-8 h-8 rounded-[2px] bg-white/90 hover:bg-white text-slateInk flex items-center justify-center shadow-xs transition-colors">
+        <span class="font-mono text-[10px] font-bold text-terracotta">N</span>
+      </button>
+    </div>
+
+    <!-- Quick Layer Toggle Tool -->
+    <div class="glass-panel p-1.5 rounded-[4px] shadow-warmSlate border border-white/90 flex flex-col items-center space-y-2">
+      <button title="Toggle Contour Lines" class="w-8 h-8 rounded-[2px] bg-white hover:bg-slate-50 text-slateInk flex items-center justify-center shadow-xs">
+        <svg class="w-4 h-4 text-slateSec" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/>
+        </svg>
+      </button>
+      <button title="Voxel Grid Overlay" class="w-8 h-8 rounded-[2px] bg-slate-900 text-white flex items-center justify-center shadow-xs">
+        <svg class="w-4 h-4 text-emeraldAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= BOTTOM STATUS FOOTER ================= -->
+  <footer class="absolute bottom-6 left-[400px] right-6 z-20 pointer-events-none flex items-center justify-between">
+    <!-- Coordinate HUD -->
+    <div class="pointer-events-auto glass-panel px-4 py-2 rounded-[4px] shadow-warmSlate border border-white/90 flex items-center space-x-4 font-mono text-xs">
+      <div class="flex items-center space-x-1.5">
+        <span class="text-slateMuted font-medium">CURSOR:</span>
+        <span class="text-slateInk font-bold">44°53'14.28" N, 0°34'11.19" E</span>
+      </div>
+      <span class="text-slateMuted">|</span>
+      <div class="flex items-center space-x-1.5">
+        <span class="text-slateMuted font-medium">ZOOM:</span>
+        <span class="text-slateInk font-bold">17.8z</span>
+      </div>
+      <span class="text-slateMuted">|</span>
+      <div class="flex items-center space-x-1.5">
+        <span class="text-slateMuted font-medium">BEARING:</span>
+        <span class="text-slateInk font-bold">342° NW</span>
+      </div>
+    </div>
+
+    <!-- Scale & Attribution -->
+    <div class="pointer-events-auto glass-panel px-3.5 py-1.5 rounded-[4px] shadow-warmSlate border border-white/90 flex items-center space-x-3 font-mono text-[11px] text-slateSec">
+      <div class="flex items-center space-x-1.5">
+        <div class="w-12 h-1 bg-slateInk relative">
+          <div class="absolute -top-1 left-0 w-[1px] h-3 bg-slateInk"></div>
+          <div class="absolute -top-1 right-0 w-[1px] h-3 bg-slateInk"></div>
+        </div>
+        <span class="font-bold text-slateInk">100m</span>
+      </div>
+      <span class="text-slateMuted">|</span>
+      <span class="text-slateMuted">TERRAVOXEL SATELLITE ENGINE © 2024</span>
+    </div>
+  </footer>
+
+</body>
+</html>

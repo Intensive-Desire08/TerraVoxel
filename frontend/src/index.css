@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply m-0 p-0 antialiased;
+  }
+}
+
+.hairline-b {
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
