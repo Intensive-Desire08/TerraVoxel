@@ -1,0 +1,98 @@
+/* ============================================================
+   TerraVoxel — CSS Design Tokens (theme.css)
+   All custom properties used across both modules.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* === Color Palette === */
+  --color-bg-primary:    #0a0f0d;   /* deep forest black */
+  --color-bg-secondary:  #111a15;   /* slightly lighter panel */
+  --color-bg-tertiary:   #1a2820;   /* card backgrounds */
+  --color-bg-glass:      rgba(17, 26, 21, 0.72);
+  --color-bg-glass-hover:rgba(26, 40, 32, 0.85);
+
+  --color-accent-primary:   #22c55e; /* emerald green */
+  --color-accent-secondary: #16a34a; /* deeper green */
+  --color-accent-glow:      rgba(34, 197, 94, 0.25);
+  --color-accent-teal:      #14b8a6; /* teal for HUD elements */
+  --color-accent-amber:     #f59e0b; /* warnings / carbon bars */
+
+  --color-text-primary:   #f0fdf4;   /* near white */
+  --color-text-secondary: #86efac;   /* muted green */
+  --color-text-muted:     #4d7c5f;   /* very muted */
+  --color-text-danger:    #f87171;   /* error states */
+
+  --color-border:         rgba(34, 197, 94, 0.15);
+  --color-border-hover:   rgba(34, 197, 94, 0.4);
+  --color-border-active:  rgba(34, 197, 94, 0.7);
+
+  /* === Shadows === */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 24px rgba(34, 197, 94, 0.2);
+  --shadow-glow-lg: 0 0 48px rgba(34, 197, 94, 0.15);
+
+  /* === Typography === */
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed:1.75;
+
+  /* === Spacing Scale === */
+  --space-1:  0.25rem;   /* 4px */
+  --space-2:  0.5rem;    /* 8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.5rem;    /* 24px */
+  --space-8:  2rem;      /* 32px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-12: 3rem;      /* 48px */
+  --space-16: 4rem;      /* 64px */
+
+  /* === Borders & Radii === */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-full:9999px;
+
+  /* === Z-Index Layers === */
+  --z-map:      0;
+  --z-controls: 10;
+  --z-sidebar:  20;
+  --z-hud:      30;
+  --z-overlay:  40;
+  --z-modal:    50;
+  --z-toast:    60;
+
+  /* === Transitions === */
+  --transition-fast:   0.15s ease;
+  --transition-base:   0.25s ease;
+  --transition-slow:   0.4s ease;
+  --transition-spring: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* === Layout === */
+  --sidebar-width:     340px;
+  --toolbar-height:    56px;
+  --hud-width:         260px;
+}
