@@ -201,31 +201,7 @@
 </div>
 </div>
 </div>
-<!-- Right HUD Status Items -->
-<div class="flex items-center gap-unit-6">
-<div class="hidden lg:flex items-center gap-unit-4 font-label-telemetry text-label-code text-slate-500">
-<span class="flex items-center gap-1">
-<span class="text-slate-400">SYS_CORE:</span>
-<span class="text-deep-slate font-semibold">TRVX_v2.4</span>
-</span>
-<span class="flex items-center gap-1">
-<span class="text-slate-400">AOI:</span>
-<span class="text-deep-slate font-semibold">41.40338, 2.17403</span>
-</span>
-<span class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-brand-emerald-dark font-semibold">
-<span class="inline-block w-1.5 h-1.5 bg-brand-emerald animate-ping"></span>
-          LEVEL-4 CALIBRATED
-        </span>
-</div>
-<div class="flex items-center gap-unit-2 border-l border-slate-200 pl-unit-4">
-<button class="w-8 h-8 flex items-center justify-center border border-slate-200 hover:border-deep-slate text-deep-slate transition-colors" title="Satellite Calibration">
-<span class="material-symbols-outlined">satellite_alt</span>
-</button>
-<button class="w-8 h-8 flex items-center justify-center border border-slate-200 hover:border-deep-slate text-deep-slate transition-colors" title="Settings Terminal">
-<span class="material-symbols-outlined">tune</span>
-</button>
-</div>
-</div>
+
 </header>
 <!-- MAIN VIEWPORT SPLIT (100vh - 56px) -->
 <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
@@ -323,6 +299,40 @@
 <option value="Fallow">Fallow</option>
 </select>
 <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD: SIMULATION TIMELINE & DURATION -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-brand-emerald"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Simulation Horizon &amp; Duration</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">SEC_TIME</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-700 uppercase font-medium" for="project-years-num">Project Duration (Years)</label>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">RANGE: 1 - 50 YEARS</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="project-years-slider" max="50" min="1" oninput="document.getElementById('project-years-num').value = this.value; const lbl=document.getElementById('matrix-years-label'); if(lbl) lbl.textContent=this.value;" step="1" type="range" value="10">
+<div class="relative w-28 shrink-0 flex items-center">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-8 text-deep-slate font-bold focus:ring-1 focus:ring-deep-slate rounded-none text-center" id="project-years-num" max="50" min="1" oninput="document.getElementById('project-years-slider').value = this.value; const lbl=document.getElementById('matrix-years-label'); if(lbl) lbl.textContent=this.value;" step="1" type="number" value="10">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">YRS</span>
+</div>
+<div class="flex flex-col border-y border-r border-slate-300 shrink-0">
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate border-b border-slate-300 text-xs font-label-telemetry font-bold" onclick="const num=document.getElementById('project-years-num'); num.value=Math.min(50, (parseInt(num.value)||0)+1); num.dispatchEvent(new Event('input'));" type="button">+</button>
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate text-xs font-label-telemetry font-bold" onclick="const num=document.getElementById('project-years-num'); num.value=Math.max(1, (parseInt(num.value)||0)-1); num.dispatchEvent(new Event('input'));" type="button">-</button>
+</div>
+</div>
+<div class="flex justify-between text-[10px] font-label-telemetry text-slate-400 mt-1">
+<span>1 Year</span>
+<span class="text-brand-emerald-dark font-semibold">10 YEARS (DEFAULT)</span>
+<span>50 Years</span>
 </div>
 </div>
 </div>
@@ -437,7 +447,7 @@
 <button class="w-full py-3.5 px-4 bg-brand-emerald text-deep-slate font-action-cta text-action-cta font-bold border border-deep-slate transition-all duration-150 sharp-shadow hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:bg-brand-emerald-dark active:text-white flex items-center justify-center gap-2" id="btn-initiate"><span class="">Calculate</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></button>
 <div class="mt-3 flex items-center justify-center gap-2">
 <span class="w-1.5 h-1.5 bg-slate-400"></span>
-<p class="font-label-telemetry text-[10px] text-slate-500 uppercase tracking-tight text-center">Compiles 10-year sequestration matrix • Verra &amp; Gold Standard calibrated</p>
+<p class="font-label-telemetry text-[10px] text-slate-500 uppercase tracking-tight text-center">Compiles <span id="matrix-years-label" class="font-bold text-deep-slate">10</span>-year sequestration matrix • Verra &amp; Gold Standard calibrated</p>
 </div>
 </div>
 </section>
@@ -457,6 +467,22 @@
     document.addEventListener('DOMContentLoaded', () => {
       const syncBtn = document.getElementById('btn-sync-coords');
       const coordsInput = document.getElementById('plot-coordinates');
+      const yearsNum = document.getElementById('project-years-num');
+      const yearsSlider = document.getElementById('project-years-slider');
+      const yearsLabel = document.getElementById('matrix-years-label');
+
+      if (yearsNum && yearsSlider && yearsLabel) {
+        const updateYears = (val) => {
+          let num = parseInt(val) || 10;
+          if (num < 1) num = 1;
+          if (num > 50) num = 50;
+          yearsNum.value = num;
+          yearsSlider.value = num;
+          yearsLabel.textContent = num;
+        };
+        yearsNum.addEventListener('input', (e) => updateYears(e.target.value));
+        yearsSlider.addEventListener('input', (e) => updateYears(e.target.value));
+      }
       const climateBadge = document.getElementById('climate-mode-badge');
       const hudCoords = document.getElementById('hud-coords');
       const rainfallSlider = document.getElementById('rainfall-slider');

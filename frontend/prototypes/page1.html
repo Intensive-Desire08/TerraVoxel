@@ -104,22 +104,7 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans text-stone-dark antialiased selection:bg-emerald-subtle selection:text-[#065F46] relative" style="background-color: rgb(251, 248, 243); background-image: linear-gradient(to right, rgba(120, 110, 95, 0.08) 1px, transparent 1px), linear-gradient(rgba(120, 110, 95, 0.08) 1px, transparent 1px); background-size: 32px 32px;">
-<!-- HUD Telemetric Top Coordinate Ticker Strip -->
-<div class="w-full bg-cream-surface hairline-b px-grid-margin py-1.5 z-50 flex justify-between items-center text-stone-subtle font-label-code text-[10px] tracking-wider uppercase">
-<div class="flex items-center space-x-unit-4">
-<span class="flex items-center text-stone-dark font-semibold">
-<span class="inline-block w-2 h-2 bg-emerald-bright rounded-full mr-2 shadow-[0_0_8px_#10B981] animate-pulse"></span>
-        STATUS: ONLINE // ORBITAL_LIDAR_v4.2
-      </span>
-<span class="hidden sm:inline-block text-stone-border">|</span>
-<span class="hidden sm:inline-block">SENSOR: MULTI-SPECTRAL EMISSION MATRIX [ALT: 780KM]</span>
-</div>
-<div class="flex items-center space-x-unit-4">
-<span class="text-stone-dark font-label-code font-medium">LAT: -03.4653° LON: -62.2159°</span>
-<span class="text-stone-border">|</span>
-<span class="font-label-code text-emerald-brand font-semibold">RESOLUTION: 0.12M²/VOXEL</span>
-</div>
-</div>
+
 <!-- Shared Component: TopNavBar -->
 <header class="bg-cream-surface/95 backdrop-blur-sm text-stone-dark border-b border-stone-border docked full-width top-0 z-40 sticky">
 <div class="flex justify-between items-center w-full px-grid-margin max-w-[1440px] mx-auto h-16">
@@ -130,14 +115,13 @@
         </div>
 <a class="font-headline font-bold text-lg tracking-tight text-stone-dark uppercase flex items-center gap-2" href="#">
 <span class="">TERRAVOXEL</span>
-<span class="text-xs font-label-code font-normal text-stone-subtle tracking-widest pl-2 border-l border-stone-border">// GEO-SPATIAL</span>
 </a>
 </div>
 <!-- Navigation Links (Desktop) -->
 <nav class="hidden md:flex items-center space-x-unit-8 h-full">
 <a class="text-emerald-brand border-b-2 border-emerald-brand pb-0.5 font-label-code text-xs uppercase tracking-wider flex items-center gap-1.5 font-semibold" href="#hero">
 <span class="w-1.5 h-1.5 bg-emerald-bright rounded-full"></span>
-          Telemetry
+          Platform
         </a>
 <a class="text-stone-subtle hover:text-stone-dark font-label-code text-xs uppercase tracking-wider transition-colors" href="#workflow">
           Workflow
@@ -148,10 +132,7 @@
 </nav>
 <!-- Trailing Action Cluster -->
 <div class="flex items-center space-x-unit-3">
-<a class="border border-stone-border bg-cream-surface px-unit-3 py-1.5 font-label-code text-xs tracking-wider hover:border-stone-dark transition-colors text-stone-dark hidden sm:inline-flex items-center gap-1" href="#workflow">
-<span class="w-1.5 h-1.5 bg-emerald-bright rounded-full"></span>
-<span class="">SPEC_DOCS</span>
-</a>
+
 <a class="bg-stone-dark text-white border border-stone-dark px-unit-4 py-1.5 font-label-code text-xs font-semibold tracking-wider hover:bg-emerald-brand hover:border-emerald-brand transition-all duration-150 flex items-center gap-2 shadow-[2px_2px_0px_0px_#059669]" href="page2.html">
 <span class="material-symbols-outlined text-sm text-emerald-glow" data-icon="terminal">terminal</span>
 <span class="">GET STARTED</span>
