@@ -1,12 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import ProjectPage from './pages/ProjectPage';
+import PolygonDrawerPage from './pages/PolygonDrawerPage';
 
 export default function AppRoutes() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/map/default-project" replace />} />
-        <Route path="/map/:project_id" element={<div className="glass-panel" style={{margin: '2rem', padding: '1rem'}}>Map Module Placeholder</div>} />
-        <Route path="/scene/:project_id" element={<div className="glass-panel" style={{margin: '2rem', padding: '1rem'}}>3D Scene Module Placeholder</div>} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/project/new" element={<ProjectPage />} />
+        <Route path="/map/:project_id" element={<PolygonDrawerPage />} />
       </Routes>
     </Router>
   );

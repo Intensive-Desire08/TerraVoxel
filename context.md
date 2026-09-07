@@ -94,17 +94,16 @@ Where H_max = species.max_height_m, k and m are species-specific constants
 | Framework | React via Vite | 18.x |
 | 3D Rendering | Three.js + @react-three/fiber | r3f 8.x |
 | 3D Helpers | @react-three/drei | latest |
-| Map (Module 1) | Mapbox GL JS | 3.x |
-| Draw Tool | @mapbox/mapbox-gl-draw | 1.x |
+| Map (Module 1) | Leaflet + leaflet-draw | latest |
 | Geospatial Math | @turf/turf | 7.x |
 | Poisson Sampling | poisson-disk-sampling | 2.x |
+| Routing | React Router DOM | 6.x |
 | State Management | Redux Toolkit | 2.x |
-| Styling | Vanilla CSS + CSS Variables | — |
+| Styling | Tailwind CSS + Glassmorphism components | — |
 | Build | Vite | 5.x |
 
 **Environment Variables:**
 ```
-VITE_MAPBOX_TOKEN=pk.ey...
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
