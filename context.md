@@ -23,8 +23,8 @@ boundary, and export a validated GeoJSON Polygon.
 
 **Key Behaviours:**
 - Receive `{ project_id, coordinate: [lng, lat] }` from the parent app -> fly map camera to that coordinate.
-- Render a **MapLibre GL JS** map (satellite + streets style, preferably ESRI World Imagery).
-- Activate a **draw mode** via `@mapbox/mapbox-gl-draw` (which is compatible with MapLibre) so the user can click-trace the polygon perimeter.
+- Render a **Leaflet** map (satellite + streets style, preferably ESRI World Imagery).
+- Activate a **draw mode** via `leaflet-draw` so the user can click-trace the polygon perimeter.
 - Live side-panel shows: calculated area (ha / acres) via `@turf/area`, vertex count, validation status.
 - User can **undo last vertex**, **clear polygon**, and **zoom-to-fit** the drawn shape.
 - On "Generate 3D Scene" button click:
@@ -248,7 +248,7 @@ Tree models live in `/public/assets/models/` named by exact species name:
     | { project_id, coordinate }
     v
 [Module 1: PolygonDrawerPage]
-    | User traces polygon on Mapbox map
+    | User traces polygon on Leaflet map
     | Validates, computes area
     v Clicks "Generate 3D Scene"
 [localStorage + Redux mapSlice]
@@ -390,7 +390,7 @@ The React build uses the Alabaster Voxel theme (§3.5) with Paprika + JetBrains 
 |------|---------|-------|
 | `frontend/prototypes/page1.html` | Landing / geo-spatial page with 3D globe | Uses Three.js r128 CDN, cream/emerald palette |
 | `frontend/prototypes/page2.html` | Parameter Terminal form (coords, soil, climate) | Split-pane: dark map left, white form right |
-| `frontend/prototypes/page3.html` | Polygon Drawer UI | Mapbox tracer interface |
+| `frontend/prototypes/page3.html` | Polygon Drawer UI | Leaflet tracer interface |
 | `DESIGN1.md` / `DESIGN2.md` | Material Design token spec | Identical files. Use as mood reference for component shapes. |
 | `frontend/prototypes/screen*.png` | Screenshots of the above prototypes | Visual-only reference |
 | `docs/archives/*.zip` | Original source archives | Backup |
@@ -415,20 +415,20 @@ The React build uses the Alabaster Voxel theme (§3.5) with Paprika + JetBrains 
 - [x] AppRoutes.jsx (placeholder routes for /map/:id and /scene/:id)
 
 ### Phase 2 — Module 1: Polygon Drawer
-- [ ] MapContainer.jsx — Mapbox GL JS init, fly-to coordinate
-- [ ] PolygonDrawer.jsx — integrate @mapbox/mapbox-gl-draw
+- [ ] MapContainer.jsx — Leaflet init, fly-to coordinate
+- [ ] PolygonDrawer.jsx — integrate leaflet-draw
 - [ ] DrawControls.jsx — Undo vertex, Clear, Zoom-to-fit buttons
 - [ ] AreaDisplay.jsx — live area in ha / acres via @turf/area
-- [ ] useMapboxDraw.js — hook encapsulating draw events
+- [ ] useLeafletDraw.js — hook encapsulating draw events
 - [ ] usePolygonValidation.js — kinks check, min vertex count
 - [ ] geojsonSerializer.js — build output Feature with properties
 - [ ] MapControls.jsx — zoom in/out, compass reset
-- [ ] map.css — Mapbox container + sidebar styling
+- [ ] map.css — Leaflet container + sidebar styling
 - [ ] PolygonDrawerPage.jsx — assemble all components, sidebar
 - [ ] Generate 3D Scene button -> validate -> persist -> navigate
 
 ### Phase 3 — Module 2: 3D Visualization
-- [ ] elevationAPI.js — fetch Mapbox Terrain-RGB tiles, decode elevation
+- [ ] elevationAPI.js — fetch AWS Open Data or Mapzen Terrarium tiles, decode elevation
 - [ ] terrainBuilder.js — PlaneGeometry + vertex displacement from elevation raster
 - [ ] TerrainMesh.jsx — R3F mesh with satellite texture + elevation
 - [ ] SceneCamera.jsx — OrbitControls via drei, initial camera position

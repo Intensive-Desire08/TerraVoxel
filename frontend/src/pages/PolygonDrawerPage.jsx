@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet-draw';
 import * as turf from '@turf/turf';
@@ -12,6 +12,7 @@ import { setPolygon } from '../shared/store/mapSlice';
 
 export default function PolygonDrawerPage() {
   const { project_id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -300,6 +301,7 @@ export default function PolygonDrawerPage() {
           </div>
           <button 
             disabled={areaHectares == 0}
+            onClick={() => navigate(`/scene/${project_id || 'default'}`)}
             className={`w-full h-12 flex items-center justify-center space-x-2.5 font-headline text-base font-bold rounded shadow transition-all pointer-events-auto ${areaHectares > 0 ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'bg-stone-200 text-stone-400 cursor-not-allowed'}`}
           >
             <span>Finish Integration</span>

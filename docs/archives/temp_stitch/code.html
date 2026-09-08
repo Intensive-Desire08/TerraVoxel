@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Terrascope - 3D Terrain &amp; Growth Simulation</title>
+<!-- Google Fonts: Paprika, JetBrains Mono, Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Paprika&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            paprika: ['"Paprika"', 'Georgia', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            alabaster: '#F8FAFC',
+            slatePrimary: '#0F172A',
+            slateSecondary: '#475569',
+            emeraldAccent: '#10B981',
+            emeraldHover: '#059669',
+            purpleAccent: '#8B5CF6',
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Open sunlit sky backdrop */
+    .sky-gradient-canvas {
+      background: linear-gradient(180deg, #C8E6FF 0%, #E8F4FE 45%, #FFFFFF 100%);
+    }
+
+    /* Floating Island Realistic Soft Shadow */
+    .floating-island-shadow {
+      filter: drop-shadow(0 45px 50px rgba(15, 23, 42, 0.18)) drop-shadow(0 15px 20px rgba(16, 185, 129, 0.08));
+    }
+
+    /* Blocky crisp button active states */
+    .btn-blocky {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-blocky:active {
+      transform: translateY(1px);
+    }
+
+    /* Frosted Glassmorphism Standard */
+    .glass-panel {
+      background-color: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+    }
+
+    .glass-panel-subtle {
+      background-color: rgba(255, 255, 255, 0.60);
+      backdrop-filter: blur(12px) saturate(150%);
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+    }
+
+    /* Custom range styling */
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #10B981;
+      border: 2.5px solid #FFFFFF;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(16,185,129,0.4);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: #10B981;
+      border: 2.5px solid #FFFFFF;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(16,185,129,0.4);
+    }
+
+    /* Gentle Floating animation for the voxel island */
+    @keyframes subtleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+    .animate-float {
+      animation: subtleFloat 7s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-alabaster text-slatePrimary font-sans antialiased overflow-hidden select-none h-screen w-screen flex flex-col">
+<!-- ================= TOP NAVIGATION BAR ================= -->
+<header class="relative z-30 h-16 border-b border-slate-200/80 glass-panel px-6 flex items-center justify-between">
+<div class="flex items-center space-x-4">
+<!-- Voxel Brand Icon -->
+<div class="w-9 h-9 bg-emeraldAccent rounded-sm shadow-[0_2px_10px_rgba(16,185,129,0.3)] flex items-center justify-center border border-white/50">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" x2="12" y1="22.08" y2="12"></line>
+</svg>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<h1 class="font-paprika text-lg font-bold tracking-tight text-slatePrimary">Terrascope</h1>
+<span class="text-[10px] font-mono uppercase bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-sm border border-slate-200/80">VOXEL-ENGINE V2.4</span>
+</div>
+<p class="text-xs text-slateSecondary flex items-center gap-1.5 font-sans">
+<span>3D Terrain &amp; Growth Simulation</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-emerald-700 font-medium font-mono text-[11px]">Active Model</span>
+</p>
+</div>
+</div>
+<!-- Center Simulation Status & Model Controls -->
+<div class="hidden md:flex items-center space-x-2 bg-slate-100/90 p-1 rounded-sm border border-slate-200/90 shadow-inner">
+<!-- Play / Pause Simulation Button -->
+<button class="flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-emeraldAccent hover:bg-emeraldHover text-white font-medium text-xs shadow-sm btn-blocky">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24">
+<rect height="16" rx="1" width="4" x="6" y="4"></rect>
+<rect height="16" rx="1" width="4" x="14" y="4"></rect>
+</svg>
+<span class="font-mono font-semibold">Simulating</span>
+</button>
+<!-- Active Model Selector Dropdown -->
+<div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-white text-slatePrimary font-medium text-xs border border-slate-200/70 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M2 12l10-7 10 7-10 7-10-7z"></path>
+<path d="M2 17l10 7 10-7"></path>
+</svg>
+<span class="font-mono text-slate-700">Alabaster Voxel Basin - Sector 4</span>
+<svg class="w-3 h-3 text-slate-400 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="6 9 12 15 18 9"></polyline>
+</svg>
+</div>
+<!-- Growth Mode Indicator -->
+<div class="px-2.5 py-1.5 text-[11px] font-mono text-slateSecondary flex items-center gap-1.5">
+<span class="text-slate-400">Biome:</span>
+<span class="font-semibold text-slatePrimary">Montane Flora</span>
+</div>
+</div>
+<!-- Top Right Actions & Export -->
+<div class="flex items-center space-x-3">
+<div class="hidden lg:flex flex-col text-right">
+<span class="text-[10px] uppercase font-mono text-slate-400">Atmosphere Shader</span>
+<span class="text-xs font-mono font-semibold text-emerald-700">Sunlit Raytracing v3</span>
+</div>
+<div class="h-6 w-px bg-slate-200 hidden lg:block"></div>
+<button class="px-3.5 py-1.5 text-xs font-medium text-slatePrimary bg-white/90 border border-slate-200 rounded-sm hover:bg-slate-50 btn-blocky flex items-center gap-2 shadow-sm font-mono">
+<svg class="w-3.5 h-3.5 text-emeraldAccent" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="7 10 12 15 17 10"></polyline>
+<line x1="12" x2="12" y1="15" y2="3"></line>
+</svg>
+<span>Export Data/Report</span>
+</button>
+</div>
+</header>
+<!-- ================= MAIN 3D TERRAIN VIEWER CANVAS ================= -->
+<main class="relative flex-1 w-full h-full sky-gradient-canvas overflow-hidden">
+<!-- Ambient Sun Ray Beams (Sun-drenched atmospheric look) -->
+<div class="absolute inset-0 pointer-events-none opacity-40 overflow-hidden">
+<div class="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-amber-100/60 via-emerald-100/30 to-transparent blur-3xl"></div>
+<div class="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-white/50 blur-3xl"></div>
+</div>
+<!-- 3D FLOATING VOXEL TERRAIN ISLAND (Sun-drenched, Minecraft with shaders aesthetic) -->
+<div class="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-2 pr-60 lg:pr-72">
+<div class="animate-float">
+<svg class="w-[880px] h-[640px] max-w-full max-h-[80vh] floating-island-shadow" fill="none" viewbox="0 0 1000 750" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Sun-drenched Grass Surfaces (Bright warm highlights) -->
+<lineargradient id="grassHighlight" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#86EFAC"></stop>
+<stop offset="50%" stop-color="#4ADE80"></stop>
+<stop offset="100%" stop-color="#22C55E"></stop>
+</lineargradient>
+<lineargradient id="grassLushTop" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#6EE7B7"></stop>
+<stop offset="60%" stop-color="#34D399"></stop>
+<stop offset="100%" stop-color="#10B981"></stop>
+</lineargradient>
+<lineargradient id="grassHighTier" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#A7F3D0"></stop>
+<stop offset="100%" stop-color="#6EE7B7"></stop>
+</lineargradient>
+<!-- Voxel Cliffs / Soil Terraces Left & Right Shading -->
+<lineargradient id="dirtLight" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#854D0E"></stop>
+<stop offset="40%" stop-color="#713F12"></stop>
+<stop offset="100%" stop-color="#58310C"></stop>
+</lineargradient>
+<lineargradient id="dirtDark" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#58310C"></stop>
+<stop offset="100%" stop-color="#3D2206"></stop>
+</lineargradient>
+<lineargradient id="stoneLight" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#94A3B8"></stop>
+<stop offset="100%" stop-color="#64748B"></stop>
+</lineargradient>
+<lineargradient id="stoneDark" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#64748B"></stop>
+<stop offset="100%" stop-color="#334155"></stop>
+</lineargradient>
+<!-- Pure Mountain Voxel Water Pool -->
+<lineargradient id="waterFlow" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.92"></stop>
+<stop offset="50%" stop-color="#7DD3FC" stop-opacity="0.88"></stop>
+<stop offset="100%" stop-color="#38BDF8" stop-opacity="0.95"></stop>
+</lineargradient>
+<!-- Voxel Tree Foliage Shading -->
+<lineargradient id="leafTop" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4ADE80"></stop>
+<stop offset="100%" stop-color="#15803D"></stop>
+</lineargradient>
+<lineargradient id="leafSide1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#15803D"></stop>
+<stop offset="100%" stop-color="#166534"></stop>
+</lineargradient>
+<lineargradient id="leafSide2" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#14532D"></stop>
+<stop offset="100%" stop-color="#052E16"></stop>
+</lineargradient>
+<!-- Flowering Canopy Shading (Jacaranda/Growth bloom) -->
+<lineargradient id="bloomTop" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#DDD6FE"></stop>
+<stop offset="100%" stop-color="#8B5CF6"></stop>
+</lineargradient>
+<lineargradient id="bloomSide" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#7C3AED"></stop>
+<stop offset="100%" stop-color="#5B21B6"></stop>
+</lineargradient>
+</defs>
+<!-- Floating Island Bottom Crags / Subterranean Keel (Hanging voxels) -->
+<g opacity="0.95">
+<!-- Deepest keels -->
+<polygon fill="#334155" points="490,610 530,590 560,610 520,630"></polygon>
+<polygon fill="#1E293B" points="490,610 520,630 520,665 490,640"></polygon>
+<polygon fill="#0F172A" points="520,630 560,610 560,645 520,665"></polygon>
+<!-- Main underbelly bedrock -->
+<polygon fill="#475569" points="360,510 520,440 680,510 520,590"></polygon>
+<polygon fill="#334155" points="360,510 520,590 520,630 360,545"></polygon>
+<polygon fill="#1E293B" points="520,590 680,510 680,545 520,630"></polygon>
+<polygon fill="#64748B" points="270,440 450,380 610,440 430,520"></polygon>
+<polygon fill="#475569" points="270,440 430,520 430,560 270,470"></polygon>
+<polygon fill="#334155" points="430,520 610,440 610,475 430,560"></polygon>
+</g>
+<!-- ================= BASE VOXEL PLATFORM (TIER 1) ================= -->
+<!-- Left Wing Base -->
+<polygon fill="url(#grassLushTop)" points="180,410 320,340 460,410 320,480" stroke="#A7F3D0" stroke-width="0.75"></polygon>
+<polygon fill="url(#dirtLight)" points="180,410 320,480 320,520 180,450"></polygon>
+<polygon fill="url(#dirtDark)" points="320,480 460,410 460,445 320,520"></polygon>
+<!-- Center-South Main Plateau -->
+<polygon fill="url(#grassHighlight)" points="320,480 490,400 660,480 490,560" stroke="#BBF7D0" stroke-width="0.75"></polygon>
+<polygon fill="url(#dirtLight)" points="320,480 490,560 490,595 320,520"></polygon>
+<polygon fill="url(#dirtDark)" points="490,560 660,480 660,515 490,595"></polygon>
+<!-- Right Wing Base -->
+<polygon fill="url(#grassLushTop)" points="520,410 660,340 800,410 660,480" stroke="#A7F3D0" stroke-width="0.75"></polygon>
+<polygon fill="url(#dirtLight)" points="520,410 660,480 660,515 520,445"></polygon>
+<polygon fill="url(#dirtDark)" points="660,480 800,410 800,445 660,515"></polygon>
+<!-- ================= VOXEL WATER FEATURE (Lush Cascade) ================= -->
+<!-- Water Basin on right side -->
+<polygon fill="url(#waterFlow)" points="580,390 670,345 740,380 650,425" stroke="#E0F2FE" stroke-width="1"></polygon>
+<!-- Shimmering reflections -->
+<line opacity="0.8" stroke="#FFFFFF" stroke-linecap="round" stroke-width="1.5" x1="620" x2="680" y1="380" y2="380"></line>
+<line opacity="0.6" stroke="#FFFFFF" stroke-linecap="round" stroke-width="1.2" x1="640" x2="710" y1="395" y2="395"></line>
+<!-- Small Voxel Water Fall dropping from upper ridge -->
+<polygon fill="#7DD3FC" opacity="0.9" points="650,425 665,420 665,470 650,475"></polygon>
+<!-- ================= MID TIER TOPOGRAPHY (TIER 2) ================= -->
+<!-- Middle Raised Step -->
+<polygon fill="url(#grassHighlight)" points="260,340 420,260 580,340 420,420" stroke="#DCFCE7" stroke-width="0.75"></polygon>
+<polygon fill="url(#stoneLight)" points="260,340 420,420 420,455 260,375"></polygon>
+<polygon fill="url(#stoneDark)" points="420,420 580,340 580,375 420,455"></polygon>
+<!-- East Terrace -->
+<polygon fill="url(#grassLushTop)" points="460,320 580,260 700,320 580,380" stroke="#BBF7D0" stroke-width="0.75"></polygon>
+<polygon fill="url(#dirtLight)" points="460,320 580,380 580,410 460,350"></polygon>
+<polygon fill="url(#dirtDark)" points="580,380 700,320 700,350 580,410"></polygon>
+<!-- ================= PEAK RIDGE (TIER 3 - HIGHEST VOXEL STEP) ================= -->
+<polygon fill="url(#grassHighTier)" points="340,250 460,190 570,250 450,310" stroke="#FFFFFF" stroke-width="1"></polygon>
+<polygon fill="url(#stoneLight)" points="340,250 450,310 450,340 340,280"></polygon>
+<polygon fill="url(#stoneDark)" points="450,310 570,250 570,280 450,340"></polygon>
+<!-- ================= DETAILED VOXEL TREES & VEGETATION ================= -->
+<!-- --- TREE 1 (TALL PINE / CONIFER - Back Ridge) --- -->
+<!-- Trunk -->
+<polygon fill="#78350F" points="440,225 448,221 456,225 448,229"></polygon>
+<polygon fill="#713F12" points="440,225 448,229 448,255 440,251"></polygon>
+<polygon fill="#451A03" points="448,229 456,225 456,251 448,255"></polygon>
+<!-- Canopy Lower Voxel -->
+<polygon fill="url(#leafTop)" points="420,185 448,170 476,185 448,200"></polygon>
+<polygon fill="url(#leafSide1)" points="420,185 448,200 448,225 420,210"></polygon>
+<polygon fill="url(#leafSide2)" points="448,200 476,185 476,210 448,225"></polygon>
+<!-- Canopy Upper Tier -->
+<polygon fill="url(#leafTop)" points="428,155 448,143 468,155 448,167"></polygon>
+<polygon fill="url(#leafSide1)" points="428,155 448,167 448,187 428,175"></polygon>
+<polygon fill="url(#leafSide2)" points="448,167 468,155 468,175 448,187"></polygon>
+<!-- Conifer Tip -->
+<polygon fill="#86EFAC" points="436,132 448,124 460,132 448,140"></polygon>
+<polygon fill="url(#leafSide1)" points="436,132 448,140 448,155 436,147"></polygon>
+<polygon fill="url(#leafSide2)" points="448,140 460,132 460,147 448,155"></polygon>
+<!-- --- TREE 2 (BLOSSOMING PURPLE CANOPY - Year 14 Growth Specimen) --- -->
+<!-- Trunk -->
+<polygon fill="#92400E" points="340,320 348,316 356,320 348,324"></polygon>
+<polygon fill="#78350F" points="340,320 348,324 348,355 340,351"></polygon>
+<polygon fill="#451A03" points="348,324 356,320 356,351 348,355"></polygon>
+<!-- Purple Blossom Crown -->
+<polygon fill="url(#bloomTop)" points="310,270 348,250 386,270 348,290"></polygon>
+<polygon fill="url(#bloomSide)" points="310,270 348,290 348,322 310,302"></polygon>
+<polygon fill="#4C1D95" points="348,290 386,270 386,302 348,322"></polygon>
+<!-- Top Cap -->
+<polygon fill="#EDE9FE" points="325,248 348,235 371,248 348,261"></polygon>
+<polygon fill="url(#bloomSide)" points="325,248 348,261 348,274 325,261"></polygon>
+<polygon fill="#5B21B6" points="348,261 371,248 371,261 348,274"></polygon>
+<!-- --- TREE 3 (DENSE BROADLEAF OAK - Center Basin) --- -->
+<polygon fill="#78350F" points="485,360 495,355 505,360 495,365"></polygon>
+<polygon fill="#713F12" points="485,360 495,365 495,395 485,390"></polygon>
+<polygon fill="#451A03" points="495,365 505,360 505,390 495,395"></polygon>
+<!-- Oak Foliage Block Cluster -->
+<polygon fill="url(#leafTop)" points="450,295 495,270 540,295 495,320"></polygon>
+<polygon fill="url(#leafSide1)" points="450,295 495,320 495,362 450,337"></polygon>
+<polygon fill="url(#leafSide2)" points="495,320 540,295 540,337 495,362"></polygon>
+<!-- Secondary Top Block -->
+<polygon fill="#86EFAC" points="468,268 495,252 522,268 495,284"></polygon>
+<polygon fill="url(#leafSide1)" points="468,268 495,284 495,302 468,286"></polygon>
+<polygon fill="url(#leafSide2)" points="495,284 522,268 522,286 495,302"></polygon>
+<!-- --- TREE 4 (SOUTHERN CLUSTER PINE) --- -->
+<polygon fill="#78350F" points="380,430 388,426 396,430 388,434"></polygon>
+<polygon fill="#713F12" points="380,430 388,434 388,460 380,456"></polygon>
+<polygon fill="#451A03" points="388,434 396,430 396,456 388,460"></polygon>
+<polygon fill="url(#grassHighlight)" points="360,390 388,375 416,390 388,405"></polygon>
+<polygon fill="url(#leafSide1)" points="360,390 388,405 388,432 360,417"></polygon>
+<polygon fill="url(#leafSide2)" points="388,405 416,390 416,417 388,432"></polygon>
+<!-- --- TREE 5 & 6 (YOUNG SAPLINGS / RECENT GROWTH NODES) --- -->
+<!-- Small Sapling 1 -->
+<polygon fill="#78350F" points="560,440 565,437 570,440 565,443"></polygon>
+<polygon fill="#713F12" points="560,440 565,443 565,455 560,452"></polygon>
+<polygon fill="#4ADE80" points="550,420 565,412 580,420 565,428"></polygon>
+<polygon fill="#166534" points="550,420 565,428 565,442 550,434"></polygon>
+<polygon fill="#14532D" points="565,428 580,420 580,434 565,442"></polygon>
+<!-- Small Sapling 2 near water -->
+<polygon fill="#34D399" points="720,400 730,395 740,400 730,405"></polygon>
+<polygon fill="#15803D" points="720,400 730,405 730,415 720,410"></polygon>
+<polygon fill="#14532D" points="730,405 740,400 740,410 730,415"></polygon>
+<!-- Subtle 3D Growth Elevation Voxel Pins -->
+<g transform="translate(348, 222)">
+<rect fill="#0F172A" fill-opacity="0.85" height="18" rx="2" width="70" x="-35" y="-20"></rect>
+<text fill="#DDD6FE" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" text-anchor="middle" x="0" y="-8">+4.8m Bloom</text>
+<line stroke="#8B5CF6" stroke-dasharray="2 2" stroke-width="1.5" x1="0" x2="0" y1="-2" y2="10"></line>
+<circle cx="0" cy="11" fill="#8B5CF6" r="2"></circle>
+</g>
+<g transform="translate(495, 235)">
+<rect fill="#0F172A" fill-opacity="0.85" height="18" rx="2" width="76" x="-38" y="-20"></rect>
+<text fill="#A7F3D0" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="700" text-anchor="middle" x="0" y="-8">Canopy: 94%</text>
+<line stroke="#10B981" stroke-dasharray="2 2" stroke-width="1.5" x1="0" x2="0" y1="-2" y2="15"></line>
+<circle cx="0" cy="16" fill="#10B981" r="2"></circle>
+</g>
+</svg>
+</div>
+</div>
+<!-- Active Coordinates Badge (Top Left of scene) -->
+<div class="absolute top-5 left-8 z-10 flex items-center space-x-3 bg-white/75 backdrop-blur-md px-3.5 py-2 rounded-sm border border-white/90 shadow-sm">
+<span class="inline-block w-2.5 h-2.5 rounded-none bg-emeraldAccent animate-ping"></span>
+<span class="text-xs font-mono text-slateSecondary">Voxel Terrain: <strong class="text-slatePrimary">Montane Basin A</strong></span>
+<span class="text-slate-300">|</span>
+<span class="text-xs font-mono text-slateSecondary">Grid Scale: <strong class="text-emerald-700 font-semibold">1.0m³ Cells</strong></span>
+<span class="text-slate-300">|</span>
+<span class="text-xs font-mono text-slateSecondary">Sun Azimuth: <strong class="text-slatePrimary">134° / 42° Alt</strong></span>
+</div>
+<!-- ================= FLOATING 3D HUD SIDE PANEL ================= -->
+<aside class="absolute top-5 right-6 bottom-6 w-[410px] max-w-[calc(100vw-3rem)] z-20 flex flex-col bg-white/70 backdrop-blur-md backdrop-saturate-[160%] border border-white/90 shadow-xl rounded-sm overflow-hidden">
+<!-- Panel Header: Title + Status + Project Ref -->
+<div class="p-6 border-b border-slate-200/70 bg-white/40">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-emerald-800 bg-[#D1FAE5] border border-emerald-300/80 px-2 py-0.5 rounded-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                Simulation Running
+              </span>
+<span class="text-[10px] font-mono uppercase bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded-sm border border-slate-200">
+                Year 14 Active
+              </span>
+</div>
+<h2 class="font-paprika text-2xl font-bold text-slatePrimary leading-snug">
+              Growth Simulation
+            </h2>
+</div>
+<div class="text-right">
+<span class="text-[10px] uppercase font-mono text-slateSecondary block">Project Ref</span>
+<span class="font-mono text-xs font-bold text-slatePrimary bg-white/90 px-2 py-1 rounded-sm border border-slate-200 block mt-0.5 shadow-xs">
+              PRJ-VX-9082
+            </span>
+</div>
+</div>
+</div>
+<!-- Scrollable Panel Body -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6">
+<!-- TIME SLIDER SECTION -->
+<div class="p-4 rounded-sm bg-gradient-to-b from-white/90 to-white/60 border border-white/95 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-slateSecondary uppercase tracking-wider font-mono">Growth Timeline</span>
+<span class="font-mono text-xs font-bold text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-sm border border-emerald-200">
+              Year 14 / 30
+            </span>
+</div>
+<!-- The Range Slider -->
+<div class="py-1">
+<input class="w-full h-2 bg-slate-200 rounded-sm appearance-none cursor-pointer accent-emerald-500 focus:outline-none" max="30" min="1" type="range" value="14"/>
+<div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mt-1.5">
+<span>Year 1 (Planting)</span>
+<span class="text-emerald-700 font-semibold">Current: Y14</span>
+<span>Year 30 (Mature)</span>
+</div>
+</div>
+<!-- Play / Pause / Step Controls & Speed Multipliers -->
+<div class="flex items-center justify-between pt-1 border-t border-slate-100">
+<div class="flex items-center space-x-1.5">
+<!-- Step backward -->
+<button class="w-7 h-7 rounded-sm bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-600 btn-blocky">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="19 20 9 12 19 4 19 20"></polygon>
+<line x1="5" x2="5" y1="19" y2="5"></line>
+</svg>
+</button>
+<!-- Play/Pause -->
+<button class="w-7 h-7 rounded-sm bg-emeraldAccent text-white flex items-center justify-center btn-blocky shadow-sm hover:bg-emeraldHover">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24">
+<rect height="16" rx="1" width="4" x="6" y="4"></rect>
+<rect height="16" rx="1" width="4" x="14" y="4"></rect>
+</svg>
+</button>
+<!-- Step forward -->
+<button class="w-7 h-7 rounded-sm bg-white border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-600 btn-blocky">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="5 4 15 12 5 20 5 4"></polygon>
+<line x1="19" x2="19" y1="5" y2="19"></line>
+</svg>
+</button>
+</div>
+<!-- Speed Multipliers -->
+<div class="flex items-center space-x-1 font-mono text-[11px]">
+<span class="text-[10px] text-slate-400 mr-1">Speed:</span>
+<button class="px-2 py-0.5 rounded-sm bg-slate-100 hover:bg-slate-200 text-slate-600">1x</button>
+<button class="px-2 py-0.5 rounded-sm bg-emeraldAccent text-white font-bold">2x</button>
+<button class="px-2 py-0.5 rounded-sm bg-slate-100 hover:bg-slate-200 text-slate-600">5x</button>
+</div>
+</div>
+</div>
+<!-- CARBON ACCRUAL & COUNTERS -->
+<div class="space-y-4">
+<!-- Carbon Credit Counter Primary Box -->
+<div class="p-4 rounded-sm bg-white/80 border border-slate-200/80 shadow-xs">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[10px] font-mono text-slateSecondary uppercase tracking-wider block">Carbon Yield Meter</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-mono text-3xl font-bold tracking-tight text-slatePrimary">1,245</span>
+<span class="font-mono text-xs font-semibold text-slate-500 uppercase">Credits</span>
+</div>
+<span class="text-xs text-slate-500 font-sans mt-0.5 block">Total Carbon Credits Accrued</span>
+</div>
+<span class="inline-flex items-center gap-1 font-mono text-xs font-bold text-emerald-800 bg-[#D1FAE5] border border-emerald-300/80 px-2 py-1 rounded-sm">
+<svg class="w-3 h-3 text-emerald-700" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<polyline points="18 15 12 9 6 15"></polyline>
+</svg>
+                +18.4% YoY
+              </span>
+</div>
+</div>
+<!-- Carbon Sequestered Progress Bar -->
+<div class="p-4 rounded-sm bg-white/80 border border-slate-200/80 space-y-2">
+<div class="flex items-center justify-between text-xs font-mono">
+<span class="text-slateSecondary uppercase font-semibold text-[10px]">Carbon Sequestered</span>
+<span class="text-emerald-700 font-bold">84.3%</span>
+</div>
+<!-- Progress Bar (Emerald Green over soft emerald track) -->
+<div class="w-full bg-[#D1FAE5] h-2.5 rounded-sm overflow-hidden p-0.5 border border-emerald-200/70">
+<div class="bg-[#10B981] h-full rounded-xs transition-all duration-500" style="width: 84.3%"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-mono text-slateSecondary pt-0.5">
+<span class="text-slatePrimary font-semibold">842.6 tCO₂e</span>
+<span class="text-slate-400">Target: 1,000 tCO₂e</span>
+</div>
+</div>
+</div>
+<!-- SECONDARY METRICS GRID -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Average Tree Height (Muted Purple / accent-purple) -->
+<div class="p-3.5 bg-white/80 border border-slate-200/80 rounded-sm">
+<span class="text-[10px] font-mono text-slateSecondary uppercase block">Avg Tree Height</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="font-mono text-2xl font-bold text-purpleAccent">4.2</span>
+<span class="font-mono text-xs font-medium text-slateSecondary">m</span>
+</div>
+<div class="flex items-center gap-1 mt-1 font-mono text-[10px] text-purple-700 font-medium">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24">
+<polyline points="18 15 12 9 6 15"></polyline>
+</svg>
+<span>+1.1m growth (Y14)</span>
+</div>
+</div>
+<!-- Canopy Density / Biomass Index -->
+<div class="p-3.5 bg-white/80 border border-slate-200/80 rounded-sm">
+<span class="text-[10px] font-mono text-slateSecondary uppercase block">Canopy Density</span>
+<div class="flex items-baseline gap-1.5 mt-1">
+<span class="font-mono text-2xl font-bold text-slatePrimary">78.4%</span>
+</div>
+<span class="inline-block mt-1 font-mono text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded-sm">
+              Voxel Canopy: Dense
+            </span>
+</div>
+<!-- Total Saplings / Voxel Flora Count (Span 2 cols) -->
+<div class="col-span-2 p-3.5 bg-white/80 border border-slate-200/80 rounded-sm flex items-center justify-between">
+<div>
+<span class="text-[10px] font-mono text-slateSecondary uppercase block">Total Voxel Flora Count</span>
+<span class="font-mono text-xl font-bold text-slatePrimary mt-0.5 block">3,480 <span class="text-xs text-slate-500 font-normal font-sans">units</span></span>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-mono text-slate-400 uppercase block">Survival Rate</span>
+<span class="font-mono text-sm font-bold text-emerald-700">96.2%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel Footer (Telemetry Status) -->
+<div class="p-4 border-t border-slate-200/70 bg-white/60 flex items-center justify-between">
+<div class="flex items-center gap-2 text-xs font-mono text-slateSecondary">
+<span class="inline-block w-2 h-2 rounded-none bg-emeraldAccent animate-pulse"></span>
+<span>Growth Algorithm: Active</span>
+</div>
+<button class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs rounded-sm btn-blocky flex items-center gap-1.5">
+<span>Run Forecast</span>
+<svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</button>
+</div>
+</aside>
+<!-- ================= FLOATING 3D SCENE TOOLBAR ================= -->
+<!-- Centered floating toolbar for 3D navigation & controls -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 lg:-translate-x-[calc(50%+100px)] z-20 flex items-center space-x-1.5 glass-panel px-3 py-2 rounded-sm shadow-xl">
+<!-- Toggle Wireframe -->
+<button class="px-2.5 py-1.5 rounded-sm bg-white/80 hover:bg-white text-slateSecondary hover:text-slatePrimary font-mono text-xs border border-slate-200/70 btn-blocky flex items-center gap-1.5 shadow-2xs">
+<svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+<polyline points="2 17 12 22 22 17"></polyline>
+<polyline points="2 12 12 17 22 12"></polyline>
+</svg>
+<span>Wireframe</span>
+</button>
+<!-- Reset Camera -->
+<button class="px-2.5 py-1.5 rounded-sm bg-white/80 hover:bg-white text-slateSecondary hover:text-slatePrimary font-mono text-xs border border-slate-200/70 btn-blocky flex items-center gap-1.5 shadow-2xs">
+<svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+<polyline points="3 3 3 8 8 8"></polyline>
+</svg>
+<span>Reset Camera</span>
+</button>
+<!-- Sun Angle / Shaders -->
+<button class="px-2.5 py-1.5 rounded-sm bg-white/80 hover:bg-white text-slateSecondary hover:text-slatePrimary font-mono text-xs border border-slate-200/70 btn-blocky flex items-center gap-1.5 shadow-2xs">
+<svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="5"></circle>
+<line x1="12" x2="12" y1="1" y2="3"></line>
+<line x1="12" x2="12" y1="21" y2="23"></line>
+<line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line>
+<line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line>
+<line x1="1" x2="3" y1="12" y2="12"></line>
+<line x1="21" x2="23" y1="12" y2="12"></line>
+</svg>
+<span>Sun Angle</span>
+</button>
+<!-- Screenshot / Capture -->
+<button class="px-2.5 py-1.5 rounded-sm bg-white/80 hover:bg-white text-slateSecondary hover:text-slatePrimary font-mono text-xs border border-slate-200/70 btn-blocky flex items-center gap-1.5 shadow-2xs">
+<svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+<circle cx="12" cy="13" r="4"></circle>
+</svg>
+<span>Capture</span>
+</button>
+<div class="h-5 w-px bg-slate-200 mx-1"></div>
+<!-- Perspective Modes (3D / Isometric / Top) -->
+<div class="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-sm border border-slate-200">
+<button class="px-2 py-1 rounded-sm font-mono text-[11px] font-bold bg-white text-emerald-800 shadow-xs">3D</button>
+<button class="px-2 py-1 rounded-sm font-mono text-[11px] text-slate-600 hover:text-slatePrimary">ISO</button>
+<button class="px-2 py-1 rounded-sm font-mono text-[11px] text-slate-600 hover:text-slatePrimary">TOP</button>
+</div>
+</div>
+<!-- Map/Scene Scale & Engine Watermark (Bottom Left) -->
+<div class="absolute bottom-6 left-8 z-10 hidden sm:flex items-center space-x-3 text-[11px] font-mono text-slateSecondary bg-white/70 backdrop-blur-md px-3 py-1.5 rounded-sm border border-white/90 shadow-sm">
+<div class="flex items-center space-x-1">
+<span class="w-8 h-1.5 border-b-2 border-l-2 border-r-2 border-slate-700 inline-block"></span>
+<span class="font-semibold text-slatePrimary">50 m</span>
+</div>
+<span class="text-slate-300">|</span>
+<span>Voxel Island: Sector 4</span>
+<span class="text-slate-300">|</span>
+<span class="text-emerald-700 font-semibold">Terrascope Volumetric Engine</span>
+</div>
+</main>
+</body></html>
