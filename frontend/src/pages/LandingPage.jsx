@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import TopNavBar from '../shared/components/TopNavBar';
 import GlobeVisualization from './GlobeVisualization';
+import CarbonCreditsModal from './CarbonCreditsModal';
 
 export default function LandingPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col font-sans text-stone-dark antialiased selection:bg-emerald-subtle selection:text-[#065F46] relative" style={{backgroundColor: '#EFF5ED', backgroundImage: 'linear-gradient(to right, rgba(90, 115, 95, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(90, 115, 95, 0.08) 1px, transparent 1px)', backgroundSize: '32px 32px'}}>
       <TopNavBar />
@@ -72,6 +76,16 @@ export default function LandingPage() {
               <div className="font-label-code text-[10px] text-stone-subtle tracking-wider uppercase">CADASTRE STATE</div>
               <div className="font-label-code text-sm font-bold text-emerald-brand">LOCKED // ETH-ERC3643</div>
             </div>
+          </div>
+
+          <div className="w-full max-w-5xl z-30 flex justify-center py-6 bg-cream-surface border border-stone-border shadow-sm mt-4">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-emerald-brand hover:bg-emerald-700 text-white font-bold py-3 px-8 shadow-[4px_4px_0px_0px_#064e3b] transition-transform active:translate-y-1 active:shadow-[1px_1px_0px_0px_#064e3b] font-label-code tracking-wider flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined">eco</span>
+              HOW TO EARN THROUGH CARBON CREDITS?
+            </button>
           </div>
 
           <div className="w-full flex justify-between items-center text-stone-subtle font-label-code text-[10px] pt-unit-4 tracking-widest max-w-5xl">
@@ -225,6 +239,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      
+      <CarbonCreditsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }

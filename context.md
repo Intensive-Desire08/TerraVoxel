@@ -23,8 +23,8 @@ boundary, and export a validated GeoJSON Polygon.
 
 **Key Behaviours:**
 - Receive `{ project_id, coordinate: [lng, lat] }` from the parent app -> fly map camera to that coordinate.
-- Render a **Mapbox GL JS** map (satellite + streets style).
-- Activate a **draw mode** via `@mapbox/mapbox-gl-draw` so the user can click-trace the polygon perimeter.
+- Render a **MapLibre GL JS** map (satellite + streets style, preferably ESRI World Imagery).
+- Activate a **draw mode** via `@mapbox/mapbox-gl-draw` (which is compatible with MapLibre) so the user can click-trace the polygon perimeter.
 - Live side-panel shows: calculated area (ha / acres) via `@turf/area`, vertex count, validation status.
 - User can **undo last vertex**, **clear polygon**, and **zoom-to-fit** the drawn shape.
 - On "Generate 3D Scene" button click:
@@ -63,23 +63,19 @@ Poisson-disk-sampled tree placement and a time-slider growth simulation.
 
 | Step | Action | Library |
 |------|---------|---------|
-| 1 | Parse GeoJSON -> project-local XY plane | turf + proj4 |
-| 2 | Query Mapbox Terrain-RGB tiles for elevation raster | Mapbox Raster Tiles API |
-| 3 | Build base mesh, displace vertices with elevation Z-data | Three.js PlaneGeometry + vertex shader |
-| 4 | Drape satellite imagery texture onto terrain mesh | Three.js TextureLoader + Mapbox Static API |
-| 5 | Run Poisson Disk Sampling inside polygon boundary | fast-poisson-disk-sampling |
-| 6 | For each sampled point: raycast -> terrain surface -> place tree | Three.js Raycaster |
-| 7 | Load species GLTF/GLB model `/assets/models/{species_name}.glb` | @react-three/drei useGLTF |
-| 8 | Instance tree models at all sampled positions | Three.js InstancedMesh |
+| 1 | Parse GeoJSON | turf |
+| 2 | Initialize MapLibre GL JS map with ESRI World Imagery and 3D terrain (via AWS Open Data or Mapzen Terrarium) | maplibre-gl |
+| 3 | Run Poisson Disk Sampling inside polygon boundary to generate tree coordinates | fast-poisson-disk-sampling |
+| 4 | Create a MapLibre `CustomLayerInterface` to render Three.js objects over the map | maplibre-gl + three |
+| 5 | Instance Minecraft-style blocky models (currently placeholder Green Boxes) at all sampled positions using Three.js | Three.js InstancedMesh |
+| 6 | Attach time-slider -> swap to the appropriate discrete growth stage model and update HUD metrics based on backend array | React state |
 | 9 | Attach time-slider -> Chapman-Richards growth curves -> scale instances | R3F useFrame animation |
 | 10 | HUD overlay: carbon bar, credit counter update per year | React state / R3F Html |
 
-**Growth Model (Chapman-Richards):**
-```
-H(t) = H_max * (1 - exp(-k * t))^m
-```
-Where H_max = species.max_height_m, k and m are species-specific constants
-(defaults: k=0.3, m=1.5 for fast-growing species like Bamboo).
+**Growth & Carbon Metrics:**
+No heavy frontend calculation is needed. The HUD directly uses the `carbon_credits_per_year` array from the backend JSON.
+Instead of continuously scaling a single model, the time slider swaps out discrete predefined 3D models for each growth stage (e.g., `bamboo_stage1.glb`, `bamboo_stage2.glb`).
+Trees are modeled as low-poly, Minecraft-style objects (e.g., ~5 green boxes for leaves, ~3 brown boxes for the trunk). Currently, a single green box is used as a placeholder.
 
 **Outputs back to parent dashboard:**
 - Tree Positions JSON
@@ -92,9 +88,8 @@ Where H_max = species.max_height_m, k and m are species-specific constants
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Framework | React via Vite | 18.x |
-| 3D Rendering | Three.js + @react-three/fiber | r3f 8.x |
-| 3D Helpers | @react-three/drei | latest |
-| Map (Module 1) | Leaflet + leaflet-draw | latest |
+| 3D Rendering | Three.js (via MapLibre CustomLayer) | latest |
+| Map (Module 1 & 2) | MapLibre GL JS | latest |
 | Geospatial Math | @turf/turf | 7.x |
 | Poisson Sampling | poisson-disk-sampling | 2.x |
 | Routing | React Router DOM | 6.x |
@@ -471,12 +466,11 @@ The React build uses the Alabaster Voxel theme (§3.5) with Paprika + JetBrains 
 | Decision | Rationale |
 |----------|-----------|
 | Vite not CRA | Faster dev server, native ESM, simpler GLB asset handling |
-| InstancedMesh for trees | Handles 8000+ tree instances at 60fps |
+| InstancedMesh for trees | Handles 8000+ tree instances at 60fps (rendered as Green Boxes for now) |
 | Poisson Disk Sampling | Enforces min_spacing_m biological constraint |
 | localStorage bridge | Simple cross-reload state between modules |
-| Mapbox Terrain-RGB tiles | Returns 256x256 PNG tiles encoding elevation in RGB channels |
-| Chapman-Richards growth | IPCC-compatible; documented in TerraVoxel spec Section 5.2 |
-| Satellite texture via Mapbox Static API | Single call per scene; avoids tile stitching |
+| MapLibre GL JS | Open-source map renderer supporting native 3D terrain and custom WebGL layers |
+| No frontend Carbon Math | We rely on the backend provided arrays to reduce logic duplication |
 
 ---
 
