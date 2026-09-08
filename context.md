@@ -94,17 +94,16 @@ Where H_max = species.max_height_m, k and m are species-specific constants
 | Framework | React via Vite | 18.x |
 | 3D Rendering | Three.js + @react-three/fiber | r3f 8.x |
 | 3D Helpers | @react-three/drei | latest |
-| Map (Module 1) | Mapbox GL JS | 3.x |
-| Draw Tool | @mapbox/mapbox-gl-draw | 1.x |
+| Map (Module 1) | Leaflet + leaflet-draw | latest |
 | Geospatial Math | @turf/turf | 7.x |
 | Poisson Sampling | poisson-disk-sampling | 2.x |
+| Routing | React Router DOM | 6.x |
 | State Management | Redux Toolkit | 2.x |
-| Styling | Vanilla CSS + CSS Variables | — |
+| Styling | Tailwind CSS + Glassmorphism components | — |
 | Build | Vite | 5.x |
 
 **Environment Variables:**
 ```
-VITE_MAPBOX_TOKEN=pk.ey...
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
@@ -282,109 +281,145 @@ Tree models live in `/public/assets/models/` named by exact species name:
 
 ## 7. Directory Structure
 
-```
-frontend/
-+-- public/
-|   +-- index.html
-|   +-- assets/
-|       +-- models/
-|           +-- Bamboo.glb
-|           +-- Teak.glb
-|           +-- Neem.glb
-|           +-- Acacia.glb
-+-- src/
-|   +-- modules/
-|   |   +-- map/                    <- MODULE 1
-|   |   |   +-- components/
-|   |   |   |   +-- MapContainer.jsx
-|   |   |   |   +-- PolygonDrawer.jsx
-|   |   |   |   +-- DrawControls.jsx
-|   |   |   |   +-- AreaDisplay.jsx
-|   |   |   |   +-- MapControls.jsx
-|   |   |   +-- hooks/
-|   |   |   |   +-- useMapboxDraw.js
-|   |   |   |   +-- usePolygonValidation.js
-|   |   |   +-- services/
-|   |   |   |   +-- geojsonSerializer.js
-|   |   |   +-- styles/
-|   |   |   |   +-- map.css
-|   |   |   +-- index.js
-|   |   |
-|   |   +-- visualization/          <- MODULE 2
-|   |       +-- components/
-|   |       |   +-- Scene3D.jsx
-|   |       |   +-- TerrainMesh.jsx
-|   |       |   +-- TreeInstances.jsx
-|   |       |   +-- SceneCamera.jsx
-|   |       |   +-- SceneLighting.jsx
-|   |       |   +-- HUDOverlay.jsx
-|   |       +-- controls/
-|   |       |   +-- TimeSlider.jsx
-|   |       |   +-- SceneToolbar.jsx
-|   |       +-- hooks/
-|   |       |   +-- useTerrainData.js
-|   |       |   +-- usePoissonSampling.js
-|   |       |   +-- useGrowthAnimation.js
-|   |       |   +-- useCarbonMetrics.js
-|   |       +-- engine/
-|   |       |   +-- terrainBuilder.js
-|   |       |   +-- poissonSampler.js
-|   |       |   +-- growthCurves.js
-|   |       |   +-- carbonAccounting.js
-|   |       +-- services/
-|   |       |   +-- elevationAPI.js
-|   |       |   +-- treePositionExporter.js
-|   |       +-- styles/
-|   |       |   +-- scene.css
-|   |       +-- index.js
-|   |
-|   +-- pages/
-|   |   +-- PolygonDrawerPage.jsx
-|   |   +-- Scene3DPage.jsx
-|   |
-|   +-- shared/
-|   |   +-- components/
-|   |   |   +-- LoadingSpinner.jsx
-|   |   |   +-- ErrorBoundary.jsx
-|   |   +-- hooks/
-|   |   |   +-- useLocalStorage.js
-|   |   +-- store/
-|   |   |   +-- slices/
-|   |   |   |   +-- mapSlice.js
-|   |   |   |   +-- sceneSlice.js
-|   |   |   +-- store.js
-|   |   +-- utils/
-|   |   |   +-- constants.js
-|   |   |   +-- formatters.js
-|   |   +-- styles/
-|   |       +-- globals.css
-|   |       +-- theme.css
-|   |
-|   +-- routes/
-|   |   +-- AppRoutes.jsx
-|   +-- App.jsx
-|   +-- main.jsx
-|
-+-- .env.example
-+-- vite.config.js
-+-- package.json
-+-- README.md
-```
+> Legend: ✅ = implemented  ·  📄 = stub (comment-only placeholder)  ·  🎨 = design reference
+
+├── frontend/
+│   ├── public/
+│   │   ├── index.html                         ✅
+│   │   └── assets/models/                     (GLBs go here: Bamboo.glb, Teak.glb, etc.)
+│   │
+│   ├── src/
+│   │   ├── main.jsx                           ✅  React entrypoint, Provider + globals.css
+│   │   ├── AppRoutes.jsx                      ✅  BrowserRouter, /map/:id, /scene/:id
+│   │   ├── App.jsx                            📄  (unused — main.jsx imports AppRoutes directly)
+│   │   │
+│   │   ├── modules/
+│   │   │   ├── map/                           ← MODULE 1: Polygon Drawer
+│   │   │   │   ├── components/
+│   │   │   │   │   ├── MapContainer.jsx        📄
+│   │   │   │   │   ├── PolygonDrawer.jsx       📄
+│   │   │   │   │   ├── DrawControls.jsx        📄
+│   │   │   │   │   ├── AreaDisplay.jsx         📄
+│   │   │   │   │   └── MapControls.jsx         📄
+│   │   │   │   ├── hooks/
+│   │   │   │   │   ├── useMapboxDraw.js        📄
+│   │   │   │   │   └── usePolygonValidation.js 📄
+│   │   │   │   ├── services/
+│   │   │   │   │   └── geojsonSerializer.js    📄
+│   │   │   │   ├── styles/
+│   │   │   │   │   └── map.css                📄
+│   │   │   │   └── index.js                   📄
+│   │   │   │
+│   │   │   └── visualization/                 ← MODULE 2: 3D Scene
+│   │   │       ├── components/
+│   │   │       │   ├── Scene3D.jsx             📄
+│   │   │       │   ├── TerrainMesh.jsx         📄
+│   │   │       │   ├── TreeInstances.jsx       📄
+│   │   │       │   ├── SceneCamera.jsx         📄
+│   │   │       │   ├── SceneLighting.jsx       📄
+│   │   │       │   └── HUDOverlay.jsx          📄
+│   │   │       ├── controls/
+│   │   │       │   ├── TimeSlider.jsx          📄
+│   │   │       │   └── SceneToolbar.jsx        📄
+│   │   │       ├── hooks/
+│   │   │       │   ├── useTerrainData.js       📄
+│   │   │       │   ├── usePoissonSampling.js   📄
+│   │   │       │   ├── useGrowthAnimation.js   📄
+│   │   │       │   └── useCarbonMetrics.js     📄
+│   │   │       ├── engine/
+│   │   │       │   ├── terrainBuilder.js       📄
+│   │   │       │   ├── poissonSampler.js       📄
+│   │   │       │   ├── growthCurves.js         📄
+│   │   │       │   └── carbonAccounting.js     📄
+│   │   │       ├── services/
+│   │   │       │   ├── elevationAPI.js         📄
+│   │   │       │   └── treePositionExporter.js 📄
+│   │   │       ├── styles/
+│   │   │       │   └── scene.css              📄
+│   │   │       └── index.js                   📄
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── PolygonDrawerPage.jsx           📄
+│   │   │   └── Scene3DPage.jsx                 📄
+│   │   │
+│   │   ├── shared/
+│   │   │   ├── components/
+│   │   │   │   ├── LoadingSpinner.jsx          📄
+│   │   │   │   └── ErrorBoundary.jsx           📄
+│   │   │   ├── hooks/
+│   │   │   │   └── useLocalStorage.js          ✅  localStorage bridge between modules
+│   │   │   ├── store/
+│   │   │   │   ├── store.js                   ✅  configureStore({map, scene})
+│   │   │   │   ├── mapSlice.js                ✅  polygon, projectId, isDrawing
+│   │   │   │   ├── sceneSlice.js              ✅  treePositions, currentYear, carbonMetrics
+│   │   │   │   └── slices/                    📄  (old stubs — superseded by files above)
+│   │   │   ├── utils/
+│   │   │   │   ├── constants.js               📄
+│   │   │   │   └── formatters.js              📄
+│   │   │   └── styles/
+│   │   │       ├── theme.css                  ✅  Alabaster Voxel design tokens
+│   │   │       └── globals.css                ✅  CSS reset + grid motif + .glass-panel
+│   │   │
+│   │   └── routes/
+│   │       └── AppRoutes.jsx                  📄  (old stub — superseded by src/AppRoutes.jsx)
+│   │
+│   ├── prototypes/                            🎨  Design reference prototypes (HTML/CSS/PNG)
+│   │   ├── page1.html / screen1.png           🎨  Landing / geo-spatial page
+│   │   ├── page2.html / screen2.png           🎨  Parameter terminal
+│   │   └── page3.html / screen3.png           🎨  Polygon drawer UI
+│   │
+│   ├── .env.example                           ✅
+│   ├── vite.config.js                         ✅
+│   ├── package.json                           ✅
+│   └── README.md                              📄
+│
+├── docs/
+│   ├── archives/                              📦  ZIP archives of prototypes
+│   │   ├── page 1.zip
+│   │   ├── page 2.zip
+│   │   └── stitch_terravoxel_polygon_drawer.zip
+│   ├── json_config.md                         ✅  I/O JSON specs
+│   └── TerraVoxel.docx                        ✅  Original project documentation
+│
+├── backend/                                   📄  Backend stub
+├── DESIGN1.md / DESIGN2.md                    🎨  Material Design token spec
+└── context.md                                 ✅  This file
+
+### Design Reference Files (pre-existing)
+
+These files were created before the React scaffold and serve as **visual reference only**.
+They use Tailwind CSS via CDN and different font stacks (Epilogue, Plus Jakarta Sans, Public Sans).
+The React build uses the Alabaster Voxel theme (§3.5) with Paprika + JetBrains Mono instead.
+
+| File | Purpose | Notes |
+|------|---------|-------|
+| `frontend/prototypes/page1.html` | Landing / geo-spatial page with 3D globe | Uses Three.js r128 CDN, cream/emerald palette |
+| `frontend/prototypes/page2.html` | Parameter Terminal form (coords, soil, climate) | Split-pane: dark map left, white form right |
+| `frontend/prototypes/page3.html` | Polygon Drawer UI | Mapbox tracer interface |
+| `DESIGN1.md` / `DESIGN2.md` | Material Design token spec | Identical files. Use as mood reference for component shapes. |
+| `frontend/prototypes/screen*.png` | Screenshots of the above prototypes | Visual-only reference |
+| `docs/archives/*.zip` | Original source archives | Backup |
 
 ---
 
 ## 8. TODO List (Execution Checklist)
 
-### Phase 0 — Scaffold
-- [ ] npm create vite@latest frontend -- --template react
-- [ ] Install all npm dependencies
-- [ ] Set up Vite config (alias @ -> src/, GLB asset handling)
-- [ ] Create all directories and placeholder index.js files
-- [ ] Create .env.example
+### Phase 0 — Scaffold ✅
+- [x] Manual Vite project setup (package.json + vite.config.js)
+- [x] Install all npm dependencies (Vite 5.x resolved, then audit-fixed to 8.x)
+- [x] Set up Vite config (alias @ -> src/, GLB asset handling)
+- [x] Create all directories and placeholder stub files
+- [x] Create .env.example
 
-### Phase 1 — Module 1: Polygon Drawer
-- [ ] globals.css + theme.css (design tokens, dark theme)
-- [ ] store.js + mapSlice.js (Redux: geojson, drawingState, area)
+### Phase 1 — Design System & State ✅
+- [x] theme.css — Alabaster Voxel design tokens (light canvas, Paprika + JetBrains Mono)
+- [x] globals.css — CSS reset, base typography, grid motif, .glass-panel utility
+- [x] store.js + mapSlice.js + sceneSlice.js (Redux store)
+- [x] useLocalStorage.js hook (state bridge between modules)
+- [x] main.jsx (React entrypoint with Provider + globals.css)
+- [x] AppRoutes.jsx (placeholder routes for /map/:id and /scene/:id)
+
+### Phase 2 — Module 1: Polygon Drawer
 - [ ] MapContainer.jsx — Mapbox GL JS init, fly-to coordinate
 - [ ] PolygonDrawer.jsx — integrate @mapbox/mapbox-gl-draw
 - [ ] DrawControls.jsx — Undo vertex, Clear, Zoom-to-fit buttons
@@ -393,17 +428,17 @@ frontend/
 - [ ] usePolygonValidation.js — kinks check, min vertex count
 - [ ] geojsonSerializer.js — build output Feature with properties
 - [ ] MapControls.jsx — zoom in/out, compass reset
+- [ ] map.css — Mapbox container + sidebar styling
 - [ ] PolygonDrawerPage.jsx — assemble all components, sidebar
 - [ ] Generate 3D Scene button -> validate -> persist -> navigate
 
-### Phase 2 — Module 2: 3D Visualization
-- [ ] sceneSlice.js (Redux: treePositions, currentYear, carbonMetrics)
+### Phase 3 — Module 2: 3D Visualization
 - [ ] elevationAPI.js — fetch Mapbox Terrain-RGB tiles, decode elevation
 - [ ] terrainBuilder.js — PlaneGeometry + vertex displacement from elevation raster
 - [ ] TerrainMesh.jsx — R3F mesh with satellite texture + elevation
 - [ ] SceneCamera.jsx — OrbitControls via drei, initial camera position
-- [ ] SceneLighting.jsx — directional sun + ambient + hemisphere lights
-- [ ] poissonSampler.js — fast-poisson-disk-sampling within GeoJSON polygon bounds
+- [ ] SceneLighting.jsx — directional sun + ambient + hemisphere lights (§3.5 lighting table)
+- [ ] poissonSampler.js — poisson-disk-sampling within GeoJSON polygon bounds
 - [ ] usePoissonSampling.js — hook that runs sampler, memoizes result
 - [ ] TreeInstances.jsx — InstancedMesh per species GLB; ray-cast to terrain for Y
 - [ ] growthCurves.js — Chapman-Richards H(t); scale factor per year
@@ -412,15 +447,17 @@ frontend/
 - [ ] useCarbonMetrics.js — hook exposing per-year carbon state
 - [ ] TimeSlider.jsx — range input 1->N years, updates Redux currentYear
 - [ ] SceneToolbar.jsx — toggle wireframe, reset camera, screenshot
-- [ ] HUDOverlay.jsx — carbon bar, credit counter, avg height
+- [ ] HUDOverlay.jsx — carbon bar, credit counter, avg height (§3.5 HUD color table)
 - [ ] treePositionExporter.js — XY + elevation -> lat/lon output JSON
 - [ ] Scene3DPage.jsx — assemble all components
 
-### Phase 3 — Routing & Integration
-- [ ] AppRoutes.jsx — React Router /map/:project_id and /scene/:project_id
+### Phase 4 — Routing & Integration
+- [x] AppRoutes.jsx — React Router /map/:project_id and /scene/:project_id (basic)
+- [ ] Wire PolygonDrawerPage into /map route
+- [ ] Wire Scene3DPage into /scene route
 - [ ] Pass Module 2 output state to parent via Redux
 
-### Phase 4 — Polish
+### Phase 5 — Polish
 - [ ] Loading states (terrain fetch, model load)
 - [ ] Error boundaries + user-facing error messages
 - [ ] Responsive layout for desktop/tablet
@@ -458,4 +495,5 @@ POST /api/v1/projects/{project_id}/tree-positions <- Output 1 JSON
 | Date | Change |
 |------|--------|
 | 2026-09-07 | Initial context file created. Directory structure planned. |
-| 2026-09-07 | **Alabaster Voxel** theme spec added. Replaced dark emerald palette with light alabaster canvas + warm Minecraft-shader lighting. Corrected Poisson sampling package name. |
+| 2026-09-07 | **Alabaster Voxel** theme spec added (§3.5). Replaced dark emerald palette with light canvas + Minecraft-shader lighting. Corrected `poisson-disk-sampling` package name. |
+| 2026-09-07 | Phase 0 & 1 complete. `theme.css` rewritten to Alabaster Voxel. `globals.css`, Redux store, `useLocalStorage`, `main.jsx`, `AppRoutes.jsx` all implemented. Directory tree reformatted with ✅/📄 status markers. Documented pre-existing design reference files (`page1.html`, `page2.html`, `DESIGN*.md`, screenshots). Renumbered phases: Phase 2 = Polygon Drawer, Phase 3 = 3D Viz. |

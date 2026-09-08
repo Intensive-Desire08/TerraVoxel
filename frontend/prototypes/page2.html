@@ -1,0 +1,817 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TerraVoxel // Parameter Terminal</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Public+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#191c1e",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#e0e3e5",
+            "tertiary": "#000000",
+            "surface": "#f7f9fb",
+            "on-error-container": "#93000a",
+            "surface-dim": "#d8dadc",
+            "outline": "#76777d",
+            "inverse-on-surface": "#eff1f3",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f7f9fb",
+            "on-secondary-container": "#00714d",
+            "on-primary-fixed-variant": "#3f465c",
+            "secondary": "#006c49",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed-variant": "#005236",
+            "primary": "#000000",
+            "inverse-surface": "#2d3133",
+            "background": "#f7f9fb",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#bec6e0",
+            "on-tertiary-fixed-variant": "#005137",
+            "secondary-container": "#6cf8bb",
+            "surface-container-high": "#e6e8ea",
+            "surface-tint": "#565e74",
+            "on-background": "#191c1e",
+            "outline-variant": "#c6c6cd",
+            "primary-container": "#131b2e",
+            "on-surface-variant": "#45464d",
+            "tertiary-container": "#002114",
+            "primary-fixed": "#dae2fd",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#6ffbbe",
+            "on-primary-container": "#7c839b",
+            "inverse-primary": "#bec6e0",
+            "on-tertiary": "#ffffff",
+            "on-primary-fixed": "#131b2e",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed": "#002113",
+            "on-tertiary-fixed": "#002114",
+            "surface-container": "#eceef0",
+            "surface-container-highest": "#e0e3e5",
+            "surface-container-low": "#f2f4f6",
+            "tertiary-fixed": "#85f8c4",
+            "tertiary-fixed-dim": "#68dba9",
+            "secondary-fixed-dim": "#4edea3",
+            "on-tertiary-container": "#069669",
+            "brand-emerald": "#10B981",
+            "brand-emerald-dark": "#059669",
+            "deep-slate": "#0F172A"
+          },
+          "borderRadius": {
+            "DEFAULT": "0px",
+            "none": "0px",
+            "sm": "2px",
+            "md": "4px",
+            "lg": "4px",
+            "xl": "4px",
+            "full": "0px"
+          },
+          "spacing": {
+            "unit-3": "0.75rem",
+            "grid-gutter": "1.5rem",
+            "unit-16": "4rem",
+            "unit-32": "8rem",
+            "unit-12": "3rem",
+            "unit-1": "0.25rem",
+            "grid-margin": "2rem",
+            "unit-6": "1.5rem",
+            "unit-8": "2rem",
+            "unit-2": "0.5rem",
+            "unit-4": "1rem",
+            "unit-24": "6rem"
+          },
+          "fontFamily": {
+            "label-telemetry": ["JetBrains Mono", "monospace"],
+            "headline-lg": ["Epilogue", "sans-serif"],
+            "headline-md": ["Epilogue", "sans-serif"],
+            "body-md": ["Public Sans", "sans-serif"],
+            "action-cta": ["JetBrains Mono", "monospace"],
+            "body-sm": ["Public Sans", "sans-serif"],
+            "body-lg": ["Public Sans", "sans-serif"],
+            "headline-sm": ["Epilogue", "sans-serif"],
+            "label-code": ["JetBrains Mono", "monospace"]
+          },
+          "fontSize": {
+            "label-telemetry": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+            "headline-lg": ["44px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "body-md": ["15px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "action-cta": ["13px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-sm": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "label-code": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 18px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grid background pattern */
+    .bg-grid-slate {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 4px;
+      background: #E2E8F0;
+      border-radius: 0px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 14px;
+      background: #0F172A;
+      border: 2px solid #10B981;
+      cursor: pointer;
+      border-radius: 0px;
+    }
+
+    /* Subtle pulse animation for radar */
+    @keyframes radar-pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.4); opacity: 0.2; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .radar-ring {
+      animation: radar-pulse 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    .radar-ring-delayed {
+      animation: radar-pulse 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite 1.5s;
+    }
+    
+    .sharp-shadow {
+      box-shadow: 4px 4px 0px #0F172A;
+    }
+    .sharp-shadow-sm {
+      box-shadow: 2px 2px 0px #0F172A;
+    }
+  </style>
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body class="bg-[#FAF7F2] text-on-surface font-body-md antialiased overflow-hidden h-screen flex flex-col select-none">
+<!-- TOP APP BAR -->
+<header class="w-full h-14 bg-white border-b border-slate-200 z-50 flex items-center justify-between px-grid-margin shrink-0">
+<div class="flex items-center gap-unit-6">
+<div class="flex items-center gap-unit-2">
+<span class="w-2.5 h-2.5 bg-brand-emerald"></span>
+<span class="font-label-telemetry text-label-telemetry uppercase tracking-widest text-primary font-bold">TERRAVOXEL</span>
+</div>
+<div class="h-4 w-px bg-slate-200"></div>
+<!-- Navigation & Step Anchor -->
+<div class="flex items-center gap-unit-4">
+<a class="font-label-telemetry text-label-code text-slate-500 hover:text-black flex items-center gap-1 transition-colors" href="page1.html"><span class="material-symbols-outlined text-[14px]">arrow_back</span><span class="">Return to Page 1</span></a>
+<span class="font-label-telemetry text-label-code text-slate-300">/</span>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-slate-100 border border-slate-200">
+<span class="font-label-telemetry text-label-code font-semibold text-deep-slate">Stage 02: Parameter Terminal</span>
+</div>
+</div>
+</div>
+
+</header>
+<!-- MAIN VIEWPORT SPLIT (100vh - 56px) -->
+<div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+<!-- LEFT COLUMN: 60% SPATIAL CANVAS -->
+<section class="w-full md:w-[60%] h-full relative bg-slate-900 border-r border-slate-200 overflow-hidden flex flex-col">
+<!-- Satellite Spatial Imagery Viewport -->
+<div class="relative w-full h-full bg-slate-950 flex items-center justify-center overflow-hidden">
+<!-- Dynamic Leaflet Map Container -->
+<div id="satellite-map" class="absolute inset-0 z-0 opacity-85 filter contrast-125 saturate-150"></div>
+<!-- Static Fallback (if Leaflet fails to load or before init) -->
+<div id="map-fallback" class="absolute inset-0 bg-cover bg-center opacity-85 scale-105 filter contrast-125 z-0 transition-opacity duration-1000" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrJtLdD67YUChn7Agmby7h3f3B3YlXBj3CRet1oroGgAXoY2iSTIeY4Jb4EAm8vuhKbKtS2eHKFcuqsT5XCNdjt5UInx7MVnRsLfRxm-hnSUUZaiH8QLEwlXnQoDVaqsdL0I6UhPqokmig1kNM1I6ody26OEoJOdlmlV_QcipiucXdbTqYvNg_OBlUhgRDl4XNrOUsu5MSFsJPClwxxMROdNpGmsJGLOAxOeBbi3F68CHFZuLCugV2Tw');"></div>
+<!-- Geospatial Coordinate Matrix Overlay -->
+<div class="absolute inset-0 pointer-events-none bg-grid-slate opacity-20"></div>
+<!-- Crosshair & Radar Focus -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<!-- Animated Radar Rings -->
+<div class="absolute w-44 h-44 border border-brand-emerald/40 radar-ring"></div>
+<div class="absolute w-44 h-44 border border-brand-emerald/20 radar-ring-delayed"></div>
+<!-- Crosshair Grid Elements -->
+<div class="w-64 h-64 border border-brand-emerald/30 relative flex items-center justify-center">
+<!-- Center Cross Point -->
+<div class="w-4 h-4 relative">
+<div class="absolute top-1/2 left-0 right-0 h-px bg-brand-emerald -translate-y-1/2"></div>
+<div class="absolute left-1/2 top-0 bottom-0 w-px bg-brand-emerald -translate-x-1/2"></div>
+<div class="absolute inset-1 border border-brand-emerald"></div>
+</div>
+<!-- Precision Reticle Ticks -->
+<div id="reticle-top" class="absolute -top-2 left-1/2 -translate-x-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest whitespace-nowrap">N 03°27.91'</div>
+<div id="reticle-bottom" class="absolute -bottom-3 left-1/2 -translate-x-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest whitespace-nowrap">S 03°27.91'</div>
+<div id="reticle-left" class="absolute top-1/2 -left-10 -translate-y-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest whitespace-nowrap">W 62°12.95'</div>
+<div id="reticle-right" class="absolute top-1/2 -right-10 -translate-y-1/2 font-label-telemetry text-[9px] text-brand-emerald tracking-widest whitespace-nowrap">E 62°12.95'</div>
+<!-- Corner Frame Brackets -->
+<div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-brand-emerald"></div>
+<div class="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-brand-emerald"></div>
+<div class="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-brand-emerald"></div>
+<div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-brand-emerald"></div>
+</div>
+</div>
+<!-- Zoom & Viewport Controls -->
+<div class="absolute right-4 bottom-24 flex flex-col gap-1 z-20">
+<button id="btn-zoom-in" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm" title="Zoom In">+</button>
+<button id="btn-zoom-out" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry font-bold hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm" title="Zoom Out">-</button>
+<button id="btn-recenter" class="w-8 h-8 bg-white border border-slate-300 text-deep-slate font-label-telemetry hover:bg-slate-50 transition-colors flex items-center justify-center sharp-shadow-sm mt-2" title="Reset View">
+<span class="material-symbols-outlined text-[16px]">my_location</span>
+</button>
+</div>
+
+</div>
+</section>
+<!-- RIGHT COLUMN: 40% PARAMETER TERMINAL -->
+<section class="w-full md:w-[40%] h-full flex flex-col bg-[#F5F2EB] relative overflow-hidden">
+<!-- Terminal Header -->
+<div class="p-6 pb-4 border-b border-slate-200 bg-white/70 backdrop-blur-sm shrink-0"><div class="flex items-center justify-between mb-1"><span class="font-label-telemetry text-label-code text-slate-500 font-semibold tracking-wider">Config Node</span><span class="font-label-telemetry text-[11px] px-2 py-0.5 bg-[#F2EDE4] text-deep-slate border border-slate-300">Sys v2.4</span></div><h1 class="font-headline-sm text-headline-sm text-deep-slate tracking-tight font-semibold">Parameter Terminal</h1><p class="font-label-telemetry text-label-code text-slate-600 mt-0.5">Configure input attributes for revenue blueprint</p></div>
+<!-- Scrollable Configuration Cards Zone -->
+<div class="flex-1 overflow-y-auto p-6 space-y-6 bg-grid-slate">
+<!-- CARD 1: TERRAIN & CAPACITY -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400"><div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200"><div class="flex items-center gap-2"><span class="w-2 h-2 bg-brand-emerald"></span><h2 class="font-headline-sm text-[16px] text-deep-slate font-semibold">Plot Coordinates</h2></div><span class="font-label-telemetry text-[11px] text-slate-400">Cadastral Lock</span></div><div class="space-y-2"><div><div class="flex justify-between items-center mb-1.5"><label class="font-label-telemetry text-label-code text-slate-700 font-medium flex items-center gap-1 relative group cursor-help w-max" for="plot-coordinates">Plot Coordinates (Latitude, Longitude)<span class="material-symbols-outlined text-[13px] text-slate-400 hover:text-brand-emerald transition-colors">info</span><div class="absolute bottom-full left-0 mb-2 w-64 p-3 bg-deep-slate text-white text-[10px] font-sans shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none border border-slate-700 font-normal leading-relaxed sharp-shadow-sm"><strong class="text-brand-emerald text-[11px] mb-1 block uppercase tracking-wider">How to get coordinates:</strong>1. Open Google Maps<br/>2. Right-click any location on the map<br/>3. Click the lat/lng numbers to copy them<br/>4. Paste them here!<div class="absolute -bottom-1 left-4 w-2.5 h-2.5 bg-deep-slate border-b border-r border-slate-700 transform rotate-45"></div></div></label><span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold flex items-center gap-1"><span class="material-symbols-outlined text-[12px]">my_location</span> GPS Locked</span></div><div class="flex items-center"><div class="relative flex-1"><input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pl-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="plot-coordinates" placeholder="e.g., -03.4653, -62.2159" type="text" value="-03.4653, -62.2159"><span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">pin_drop</span></div><button class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-deep-slate border-y border-r border-slate-300 font-label-telemetry text-xs flex items-center gap-1" id="btn-sync-coords" title="Re-center map on coordinates" type="button"><span class="material-symbols-outlined text-[14px]">sync</span><span class="">Sync</span></button></div><p class="font-label-telemetry text-[10px] text-slate-500 mt-1">Cadastral ID: TRVX-7709 // AOI: Amazon Basin Polygon</p></div></div></div><div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Terrain &amp; Capacity</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-slate-400">SEC_01</span>
+</div>
+<div class="space-y-4">
+<!-- Land Area Input -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="land-area">Land Area (Acres)</label>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">RANGE: 1.0 - 100.0</span>
+</div>
+<div class="flex items-center">
+<div class="relative flex-1">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-md text-deep-slate px-3 py-2 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate rounded-none" id="land-area" max="100" min="1" step="0.5" type="number" value="10.0">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-telemetry text-label-code text-slate-400 bg-slate-100 px-1.5 py-0.5 border border-slate-200">ACRES</span>
+</div>
+<!-- Increment Buttons -->
+<div class="flex flex-col border-y border-r border-slate-300">
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate border-b border-slate-300 text-xs font-label-telemetry" onclick="document.getElementById('land-area').stepUp();" type="button">+</button>
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate text-xs font-label-telemetry" onclick="document.getElementById('land-area').stepDown();" type="button">-</button>
+</div>
+</div>
+</div>
+<!-- Land Status Dropdown -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="land-status">Land Status</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">VEG_INDEX_CALC</span>
+</div>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="land-status">
+<option value="Barren">Barren</option>
+<option selected="" value="Degraded">Degraded</option>
+<option value="Cultivated">Cultivated</option>
+<option value="Fallow">Fallow</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD: SIMULATION TIMELINE & DURATION -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-brand-emerald"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Simulation Horizon &amp; Duration</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">SEC_TIME</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-700 uppercase font-medium" for="project-years-num">Project Duration (Years)</label>
+<span class="font-label-telemetry text-[11px] text-brand-emerald-dark font-semibold">RANGE: 1 - 50 YEARS</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="project-years-slider" max="50" min="1" oninput="document.getElementById('project-years-num').value = this.value; const lbl=document.getElementById('matrix-years-label'); if(lbl) lbl.textContent=this.value;" step="1" type="range" value="10">
+<div class="relative w-28 shrink-0 flex items-center">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-8 text-deep-slate font-bold focus:ring-1 focus:ring-deep-slate rounded-none text-center" id="project-years-num" max="50" min="1" oninput="document.getElementById('project-years-slider').value = this.value; const lbl=document.getElementById('matrix-years-label'); if(lbl) lbl.textContent=this.value;" step="1" type="number" value="10">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">YRS</span>
+</div>
+<div class="flex flex-col border-y border-r border-slate-300 shrink-0">
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate border-b border-slate-300 text-xs font-label-telemetry font-bold" onclick="const num=document.getElementById('project-years-num'); num.value=Math.min(50, (parseInt(num.value)||0)+1); num.dispatchEvent(new Event('input'));" type="button">+</button>
+<button class="px-2.5 py-1 bg-slate-50 hover:bg-slate-200 text-deep-slate text-xs font-label-telemetry font-bold" onclick="const num=document.getElementById('project-years-num'); num.value=Math.max(1, (parseInt(num.value)||0)-1); num.dispatchEvent(new Event('input'));" type="button">-</button>
+</div>
+</div>
+<div class="flex justify-between text-[10px] font-label-telemetry text-slate-400 mt-1">
+<span>1 Year</span>
+<span class="text-brand-emerald-dark font-semibold">10 YEARS (DEFAULT)</span>
+<span>50 Years</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 2: SOIL & HYDROLOGY -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Soil &amp; Hydrology</h2>
+</div>
+<span class="font-label-telemetry text-[11px] text-slate-400">SEC_02</span>
+</div>
+<div class="space-y-4">
+<!-- Water Availability -->
+<div>
+<label class="block font-label-telemetry text-label-code text-slate-600 uppercase font-medium mb-1.5" for="water-avail">Water Availability</label>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="water-avail">
+<option selected="" value="Rain-fed">Rain-fed</option>
+<option value="Seasonal Canal">Seasonal Canal</option>
+<option value="Borewell">Borewell</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+<!-- Soil Type -->
+<div>
+<label class="block font-label-telemetry text-label-code text-slate-600 uppercase font-medium mb-1.5" for="soil-type">Soil Type</label>
+<div class="relative">
+<select class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm text-deep-slate px-3 py-2 pr-8 focus:ring-1 focus:ring-deep-slate focus:border-deep-slate appearance-none rounded-none cursor-pointer" id="soil-type">
+<option selected="" value="Loam">Loam</option>
+<option value="Red">Red</option>
+<option value="Sandy Loam">Sandy Loam</option>
+<option value="Clay Loam">Clay Loam</option>
+<option value="Clay">Clay</option>
+<option value="Alluvial">Alluvial</option>
+<option value="Black">Black</option>
+<option value="Sandy">Sandy</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</div>
+<!-- Soil pH with Slider + Number -->
+<div class="pt-1">
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="soil-ph-num">Soil pH Level</label>
+<div class="flex items-center gap-1">
+<span class="text-[10px] font-label-telemetry text-slate-400">ACIDIC</span>
+<span class="text-[10px] font-label-telemetry text-slate-300">---</span>
+<span class="text-[10px] font-label-telemetry text-slate-400">ALKALINE</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="soil-ph-slider" max="8.0" min="5.0" oninput="document.getElementById('soil-ph-num').value = this.value" step="0.1" type="range" value="6.5">
+<input class="w-20 bg-white border border-slate-300 font-label-telemetry text-body-sm text-center py-1.5 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="soil-ph-num" max="8.0" min="5.0" oninput="document.getElementById('soil-ph-slider').value = this.value" step="0.1" type="number" value="6.5">
+</div>
+<div class="flex justify-between text-[10px] font-label-telemetry text-slate-400 mt-1">
+<span class="">5.0 pH</span>
+<span class="text-brand-emerald-dark font-semibold">NEUTRAL (6.5 - 7.0)</span>
+<span class="">8.0 pH</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 3: CLIMATE BASELINE -->
+<div class="bg-[#FAF7F2] border border-slate-300 p-5 sharp-shadow-sm transition-all hover:border-slate-400">
+<div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-deep-slate"></span>
+<h2 class="font-headline-sm text-[16px] text-deep-slate uppercase font-semibold">Climate Baseline</h2>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 text-brand-emerald-dark text-[10px] font-label-telemetry font-bold" id="climate-mode-badge">
+<span class="w-1.5 h-1.5 bg-brand-emerald"></span>
+              Manual Entry Mode
+            </div>
+</div>
+<div class="space-y-4">
+<!-- Annual Rainfall -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="rainfall-num">Annual Rainfall (mm)</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">HISTORIC_MET_AVG</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="rainfall-slider" max="2500" min="300" oninput="document.getElementById('rainfall-num').value = this.value" step="10" type="range" value="1240">
+<div class="relative w-28 shrink-0">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-7 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="rainfall-num" max="2500" min="300" oninput="document.getElementById('rainfall-slider').value = this.value" step="10" type="number" value="1240">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">mm</span>
+</div>
+</div>
+</div>
+<!-- Average Temperature -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="font-label-telemetry text-label-code text-slate-600 uppercase font-medium" for="temp-num">Average Temperature (°C)</label>
+<span class="font-label-telemetry text-[11px] text-slate-400">SURFACE_THERMAL</span>
+</div>
+<div class="flex items-center gap-3">
+<input class="w-full cursor-pointer" id="temp-slider" max="35.0" min="15.0" oninput="document.getElementById('temp-num').value = this.value" step="0.1" type="range" value="24.5">
+<div class="relative w-28 shrink-0">
+<input class="w-full bg-white border border-slate-300 font-label-telemetry text-body-sm py-1.5 pl-2 pr-7 text-deep-slate focus:ring-1 focus:ring-deep-slate rounded-none" id="temp-num" max="35.0" min="15.0" oninput="document.getElementById('temp-slider').value = this.value" step="0.1" type="number" value="24.5">
+<span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-label-telemetry text-slate-400">°C</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FOOTER: THE HANDOFF ACTION -->
+<div class="p-6 pt-4 bg-white border-t border-slate-200 shrink-0">
+<button class="w-full py-3.5 px-4 bg-brand-emerald text-deep-slate font-action-cta text-action-cta font-bold border border-deep-slate transition-all duration-150 sharp-shadow hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none active:bg-brand-emerald-dark active:text-white flex items-center justify-center gap-2" id="btn-initiate"><span class="">Calculate</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></button>
+<div class="mt-3 flex items-center justify-center gap-2">
+<span class="w-1.5 h-1.5 bg-slate-400"></span>
+<p class="font-label-telemetry text-[10px] text-slate-500 uppercase tracking-tight text-center">Compiles <span id="matrix-years-label" class="font-bold text-deep-slate">10</span>-year sequestration matrix</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Notification Banner Mock for Action -->
+<div class="hidden fixed bottom-6 right-6 z-50 bg-deep-slate text-white border-l-4 border-brand-emerald p-4 sharp-shadow max-w-sm" id="toast">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-emerald">check_circle</span>
+<div>
+<p class="font-label-telemetry text-label-telemetry font-bold">CALCULATION MATRIX DISPATCHED</p>
+<p class="font-body-sm text-slate-300 text-xs mt-1">Telemetry parameters verified. Routing to revenue generation model...</p>
+</div>
+</div>
+</div>
+<script>
+    // Auto-fetch Climate Data (Rainfall & Temperature) via Open-Meteo API
+    document.addEventListener('DOMContentLoaded', () => {
+      const syncBtn = document.getElementById('btn-sync-coords');
+      const coordsInput = document.getElementById('plot-coordinates');
+      const yearsNum = document.getElementById('project-years-num');
+      const yearsSlider = document.getElementById('project-years-slider');
+      const yearsLabel = document.getElementById('matrix-years-label');
+
+      if (yearsNum && yearsSlider && yearsLabel) {
+        const updateYears = (val) => {
+          let num = parseInt(val) || 10;
+          if (num < 1) num = 1;
+          if (num > 50) num = 50;
+          yearsNum.value = num;
+          yearsSlider.value = num;
+          yearsLabel.textContent = num;
+        };
+        yearsNum.addEventListener('input', (e) => updateYears(e.target.value));
+        yearsSlider.addEventListener('input', (e) => updateYears(e.target.value));
+      }
+      const climateBadge = document.getElementById('climate-mode-badge');
+      const hudCoords = document.getElementById('hud-coords');
+      const rainfallSlider = document.getElementById('rainfall-slider');
+      const rainfallNum = document.getElementById('rainfall-num');
+      const tempSlider = document.getElementById('temp-slider');
+      const tempNum = document.getElementById('temp-num');
+      
+      const reticleTop = document.getElementById('reticle-top');
+      const reticleBottom = document.getElementById('reticle-bottom');
+      const reticleLeft = document.getElementById('reticle-left');
+      const reticleRight = document.getElementById('reticle-right');
+
+      const toast = document.getElementById('toast');
+      const toastTitle = toast.querySelector('p.font-bold');
+      const toastMsg = toast.querySelector('p.font-body-sm');
+
+      function showToast(title, message, isError = false) {
+        toastTitle.textContent = title;
+        toastMsg.textContent = message;
+        toast.classList.remove('hidden');
+        if (isError) {
+          toast.classList.replace('border-brand-emerald', 'border-red-500');
+          toast.querySelector('.material-symbols-outlined').textContent = 'error';
+          toast.querySelector('.material-symbols-outlined').classList.replace('text-brand-emerald', 'text-red-500');
+        } else {
+          toast.classList.replace('border-red-500', 'border-brand-emerald');
+          toast.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+          toast.querySelector('.material-symbols-outlined').classList.replace('text-red-500', 'text-brand-emerald');
+        }
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      }
+
+      function validateAndNormalizeCoords(lat, lng) {
+        if (isNaN(lat) || isNaN(lng)) return null;
+        // Auto-swap if latitude is out of bounds [-90, 90] but longitude is in range
+        if ((lat < -90 || lat > 90) && (lng >= -90 && lng <= 90)) {
+          const temp = lat;
+          lat = lng;
+          lng = temp;
+        }
+        if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          return { lat, lng };
+        }
+        return null;
+      }
+
+      function parseCoordinates(inputStr) {
+        if (!inputStr || typeof inputStr !== 'string') return null;
+        const str = inputStr.trim();
+
+        // 1. Google Maps URL or @lat,lng
+        const urlMatch = str.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (urlMatch) {
+          return validateAndNormalizeCoords(parseFloat(urlMatch[1]), parseFloat(urlMatch[2]));
+        }
+
+        // 2. DMS format e.g. 3°27'55.1"S 62°12'57.2"W
+        const dmsRegex = /(\d+)\s*°\s*(\d+)\s*'\s*(\d+(?:\.\d+)?)\s*"\s*([NSEWnsew])/g;
+        const dmsMatches = [...str.matchAll(dmsRegex)];
+        if (dmsMatches.length === 2) {
+          const parseDMS = (m) => {
+            let deg = parseFloat(m[1]), min = parseFloat(m[2]), sec = parseFloat(m[3]), dir = m[4].toUpperCase();
+            let dd = deg + (min / 60) + (sec / 3600);
+            if (dir === 'S' || dir === 'W') dd = -dd;
+            return { val: dd, dir };
+          };
+          const c1 = parseDMS(dmsMatches[0]);
+          const c2 = parseDMS(dmsMatches[1]);
+          let lat = (c1.dir === 'N' || c1.dir === 'S') ? c1.val : c2.val;
+          let lng = (c1.dir === 'E' || c1.dir === 'W') ? c1.val : c2.val;
+          return validateAndNormalizeCoords(lat, lng);
+        }
+
+        // 3. Decimal degrees with N/S/E/W indicator e.g. 3.4653 S, 62.2159 W or 12.9716N 77.5946E
+        const dirMatch = str.match(/(-?\d+(?:\.\d+)?)\s*°?\s*([NSEWnsew])?/g);
+        if (dirMatch && dirMatch.length >= 2) {
+          let parts = [];
+          for (let part of dirMatch) {
+            let m = part.match(/(-?\d+(?:\.\d+)?)\s*°?\s*([NSEWnsew])?/);
+            if (m && m[1]) {
+              let val = parseFloat(m[1]);
+              let dir = m[2] ? m[2].toUpperCase() : null;
+              if (dir === 'S' || dir === 'W') val = -Math.abs(val);
+              else if (dir === 'N' || dir === 'E') val = Math.abs(val);
+              parts.push({ val, dir });
+            }
+          }
+          if (parts.length >= 2) {
+            let p0 = parts[0], p1 = parts[1];
+            let lat, lng;
+            if (p0.dir === 'N' || p0.dir === 'S') { lat = p0.val; lng = p1.val; }
+            else if (p1.dir === 'N' || p1.dir === 'S') { lat = p1.val; lng = p0.val; }
+            else if (p0.dir === 'E' || p0.dir === 'W') { lng = p0.val; lat = p1.val; }
+            else if (p1.dir === 'E' || p1.dir === 'W') { lng = p1.val; lat = p0.val; }
+            else { lat = p0.val; lng = p1.val; }
+            return validateAndNormalizeCoords(lat, lng);
+          }
+        }
+
+        // 4. Fallback float pair regex e.g. -3.4653, -62.2159 or 12.9716, 77.5946
+        const matches = str.match(/-?\d+(\.\d+)?/g);
+        if (matches && matches.length >= 2) {
+          return validateAndNormalizeCoords(parseFloat(matches[0]), parseFloat(matches[1]));
+        }
+
+        return null;
+      }
+
+      function updateReticleDisplay(lat, lng) {
+        const latAbs = Math.abs(lat);
+        const lngAbs = Math.abs(lng);
+        const latDeg = Math.floor(latAbs);
+        const latMin = ((latAbs - latDeg) * 60).toFixed(2);
+        const lngDeg = Math.floor(lngAbs);
+        const lngMin = ((lngAbs - lngDeg) * 60).toFixed(2);
+
+        if (reticleTop) reticleTop.textContent = `N ${String(latDeg).padStart(2, '0')}°${String(latMin).padStart(5, '0')}'`;
+        if (reticleBottom) reticleBottom.textContent = `S ${String(latDeg).padStart(2, '0')}°${String(latMin).padStart(5, '0')}'`;
+        if (reticleLeft) reticleLeft.textContent = `W ${String(lngDeg).padStart(2, '0')}°${String(lngMin).padStart(5, '0')}'`;
+        if (reticleRight) reticleRight.textContent = `E ${String(lngDeg).padStart(2, '0')}°${String(lngMin).padStart(5, '0')}'`;
+      }
+
+      // Initialize Leaflet Satellite Map
+      const mapContainer = document.getElementById('satellite-map');
+      let map;
+      let mapMarker;
+      let isProgrammaticMove = false;
+
+      if (mapContainer && typeof L !== 'undefined') {
+        const fallback = document.getElementById('map-fallback');
+        if (fallback) setTimeout(() => fallback.style.opacity = '0', 500);
+        
+        let initialLat = -3.4653;
+        let initialLng = -62.2159;
+        const startCoords = parseCoordinates(coordsInput.value);
+        if (startCoords) {
+          initialLat = startCoords.lat;
+          initialLng = startCoords.lng;
+        }
+
+        map = L.map('satellite-map', {
+          zoomControl: false, 
+          attributionControl: false
+        }).setView([initialLat, initialLng], 14);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19
+        }).addTo(map);
+
+        mapMarker = L.circleMarker([initialLat, initialLng], {
+          radius: 7,
+          fillColor: "#10B981",
+          color: "#ffffff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+
+        updateReticleDisplay(initialLat, initialLng);
+
+        // Ensure Leaflet resizes correctly inside flex layout
+        setTimeout(() => map.invalidateSize(), 300);
+        window.addEventListener('resize', () => map.invalidateSize());
+
+        // Update HUD & Reticle while dragging map
+        map.on('move', () => {
+          const center = map.getCenter();
+          updateReticleDisplay(center.lat, center.lng);
+          if (hudCoords) {
+            hudCoords.textContent = `${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
+          }
+        });
+
+        // When user finishes dragging/panning map, sync coordinates input & fetch climate
+        map.on('moveend', () => {
+          if (isProgrammaticMove) {
+            isProgrammaticMove = false;
+            return;
+          }
+          const center = map.getCenter();
+          const lat = center.lat;
+          const lng = center.lng;
+          coordsInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+          if (mapMarker) {
+            mapMarker.setLatLng([lat, lng]);
+          }
+          fetchClimateData(lat, lng, false);
+        });
+
+        document.getElementById('btn-zoom-in')?.addEventListener('click', () => map.zoomIn());
+        document.getElementById('btn-zoom-out')?.addEventListener('click', () => map.zoomOut());
+        document.getElementById('btn-recenter')?.addEventListener('click', () => {
+          const currentCoords = parseCoordinates(coordsInput.value);
+          if (currentCoords) {
+            isProgrammaticMove = true;
+            map.flyTo([currentCoords.lat, currentCoords.lng], 14, { duration: 1.2 });
+            mapMarker.setLatLng([currentCoords.lat, currentCoords.lng]);
+          }
+        });
+      }
+
+      function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 4);
+          let currentVal = start + easeProgress * (end - start);
+          
+          if (obj.id.includes('temp')) {
+             obj.value = currentVal.toFixed(1);
+          } else {
+             obj.value = Math.round(currentVal);
+          }
+          
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          } else {
+             if (obj.id.includes('temp')) obj.value = end.toFixed(1);
+             else obj.value = Math.round(end);
+          }
+        };
+        window.requestAnimationFrame(step);
+      }
+
+      async function fetchClimateData(lat, lng, notifyToast = true) {
+        if (climateBadge) {
+          climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald animate-ping"></span> FETCHING METEOROLOGY...';
+        }
+        
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_mean,precipitation_sum&past_days=90&forecast_days=0`;
+          const response = await fetch(url);
+          
+          if (!response.ok) throw new Error("API Network Error");
+          const data = await response.json();
+          
+          if (data && data.daily) {
+             const temps = data.daily.temperature_2m_mean.filter(v => v !== null);
+             const precip = data.daily.precipitation_sum.filter(v => v !== null);
+             
+             let avgTemp = 24.5;
+             let annualRainfall = 1240;
+             
+             if (temps.length > 0) {
+               avgTemp = temps.reduce((a, b) => a + b, 0) / temps.length;
+             }
+             if (precip.length > 0) {
+               const recentRain = precip.reduce((a, b) => a + b, 0);
+               annualRainfall = recentRain * 4.05; 
+             }
+             
+             if (hudCoords) hudCoords.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+             
+             if (rainfallNum && rainfallSlider) {
+                animateValue(rainfallNum, parseFloat(rainfallNum.value), annualRainfall, 800);
+                animateValue(rainfallSlider, parseFloat(rainfallSlider.value), annualRainfall, 800);
+             }
+             if (tempNum && tempSlider) {
+                animateValue(tempNum, parseFloat(tempNum.value), avgTemp, 800);
+                animateValue(tempSlider, parseFloat(tempSlider.value), avgTemp, 800);
+             }
+             
+             if (climateBadge) {
+                climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald"></span> LIVE METEO SYNCHRONIZED';
+             }
+             if (notifyToast) {
+               showToast("TELEMETRY SYNCHRONIZED", `Data updated for ${lat.toFixed(4)}, ${lng.toFixed(4)} via Open-Meteo.`);
+             }
+          } else {
+             throw new Error("Invalid payload from Open-Meteo");
+          }
+        } catch (error) {
+          console.error(error);
+          if (climateBadge) {
+             climateBadge.innerHTML = '<span class="w-1.5 h-1.5 bg-brand-emerald"></span> Manual Entry Mode';
+          }
+          if (notifyToast) {
+            showToast("SYNC ERROR", "Could not fetch telemetry. Check connection or coordinates.", true);
+          }
+        }
+      }
+
+      function handleSync() {
+        const val = coordsInput.value;
+        const coords = parseCoordinates(val);
+        if (coords) {
+          coordsInput.value = `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+          if (map) {
+            isProgrammaticMove = true;
+            map.flyTo([coords.lat, coords.lng], 14, { duration: 1.2 });
+            if (mapMarker) {
+              mapMarker.setLatLng([coords.lat, coords.lng]);
+            }
+          }
+          fetchClimateData(coords.lat, coords.lng, true);
+        } else {
+          showToast("INVALID FORMAT", "Valid format: Lat, Lng (e.g. -3.4653, -62.2159 or copied from Google Maps)", true);
+        }
+      }
+
+      if (syncBtn) {
+        syncBtn.addEventListener('click', handleSync);
+      }
+      if (coordsInput) {
+        coordsInput.addEventListener('keydown', (e) => {
+           if (e.key === 'Enter') handleSync();
+        });
+      }
+    });
+
+    // Micro-interaction for submit action
+    const btn = document.getElementById('btn-initiate');
+    const toast = document.getElementById('toast');
+
+    btn.addEventListener('click', () => {
+      btn.innerText = 'CALCULATING_BIOMASS_DELTA...';
+      btn.classList.add('opacity-80');
+      
+      setTimeout(() => {
+        toast.classList.remove('hidden');
+        btn.innerHTML = `<span>&gt; INITIATE_YIELD_CALCULATION</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
+        btn.classList.remove('opacity-80');
+        
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 5000);
+      }, 900);
+    });
+  </script>
+
+
+</body></html>

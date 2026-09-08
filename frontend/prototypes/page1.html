@@ -1,0 +1,882 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>TERRAVOXEL // GEO-SPATIAL - Evaluate Your Land for Carbon Investment</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Google Fonts: Plus Jakarta Sans, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:ital,wght@0,300..800;1,300..800&amp;family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;display=swap" rel="stylesheet">
+<!-- Three.js CDN for interactive 3D Globe -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "cream-bg": "#EFF5ED",
+            "cream-surface": "#F6FAF4",
+            "cream-muted": "#E5EDE2",
+            "stone-dark": "#18181B",
+            "stone-subtle": "#4B5563",
+            "stone-border": "#D5DFD2",
+            "stone-border-light": "#E2EAE0",
+            "emerald-brand": "#059669",
+            "emerald-bright": "#10B981",
+            "emerald-glow": "#34D399",
+            "emerald-subtle": "#D1FAE5",
+            "ocean-deep": "#0F1E36",
+            "ocean-mid": "#162B4D",
+            "primary": "#18181B",
+            "on-surface": "#18181B",
+            "on-surface-variant": "#4B5563"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "unit-1": "0.25rem",
+            "unit-2": "0.5rem",
+            "unit-3": "0.75rem",
+            "unit-4": "1rem",
+            "unit-6": "1.5rem",
+            "unit-8": "2rem",
+            "unit-12": "3rem",
+            "unit-16": "4rem",
+            "unit-24": "6rem",
+            "unit-32": "8rem",
+            "grid-margin": "2rem",
+            "grid-gutter": "1.5rem"
+          },
+          "fontFamily": {
+            "sans": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "headline": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "label-code": ["JetBrains Mono", "monospace"],
+            "action-cta": ["Plus Jakarta Sans", "JetBrains Mono", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Warm Sage-Tinted Cream Grid Base - #EFF5ED */
+    body {
+      background-color: #EFF5ED;
+      background-image: 
+        linear-gradient(to right, rgba(90, 115, 95, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(90, 115, 95, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      color: #18181B;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      overflow-x: hidden;
+    }
+    
+    .hairline-b {
+      border-bottom: 1px solid #D5DFD2;
+    }
+    .hairline-t {
+      border-top: 1px solid #D5DFD2;
+    }
+    .hairline-r {
+      border-right: 1px solid #D5DFD2;
+    }
+    .hairline-l {
+      border-left: 1px solid #D5DFD2;
+    }
+    .hairline-all {
+      border: 1px solid #D5DFD2;
+    }
+
+    #globe-container {
+      position: relative;
+      cursor: grab;
+    }
+    #globe-container:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans text-stone-dark antialiased selection:bg-emerald-subtle selection:text-[#065F46] relative" style="background-color: rgb(251, 248, 243); background-image: linear-gradient(to right, rgba(120, 110, 95, 0.08) 1px, transparent 1px), linear-gradient(rgba(120, 110, 95, 0.08) 1px, transparent 1px); background-size: 32px 32px;">
+
+<!-- Shared Component: TopNavBar -->
+<header class="bg-cream-surface/95 backdrop-blur-sm text-stone-dark border-b border-stone-border docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center w-full px-grid-margin max-w-[1440px] mx-auto h-16">
+<!-- Brand Anchor -->
+<div class="flex items-center space-x-unit-3">
+<div class="w-7 h-7 bg-emerald-brand text-white flex items-center justify-center font-label-code text-xs font-bold border border-emerald-brand shadow-[1px_1px_0px_0px_#18181B]">
+          TV
+        </div>
+<a class="font-headline font-bold text-lg tracking-tight text-stone-dark uppercase flex items-center gap-2" href="#">
+<span class="">TERRAVOXEL</span>
+</a>
+</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex items-center space-x-unit-8 h-full">
+<a class="text-emerald-brand border-b-2 border-emerald-brand pb-0.5 font-label-code text-xs uppercase tracking-wider flex items-center gap-1.5 font-semibold" href="#hero">
+<span class="w-1.5 h-1.5 bg-emerald-bright rounded-full"></span>
+          Platform
+        </a>
+<a class="text-stone-subtle hover:text-stone-dark font-label-code text-xs uppercase tracking-wider transition-colors" href="#workflow">
+          Workflow
+        </a>
+<a class="text-stone-subtle hover:text-stone-dark font-label-code text-xs uppercase tracking-wider transition-colors" href="#action-section">
+          Initiate Plot
+        </a>
+</nav>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center space-x-unit-3">
+
+<a class="bg-stone-dark text-white border border-stone-dark px-unit-4 py-1.5 font-label-code text-xs font-semibold tracking-wider hover:bg-emerald-brand hover:border-emerald-brand transition-all duration-150 flex items-center gap-2 shadow-[2px_2px_0px_0px_#059669]" href="page2.html">
+<span class="material-symbols-outlined text-sm text-emerald-glow" data-icon="terminal">terminal</span>
+<span class="">GET STARTED</span>
+</a>
+</div>
+</div>
+</header>
+<!-- MAIN CANVAS -->
+<main class="flex-grow flex flex-col items-center w-full relative">
+<!-- SECTION 1: THE 3D EARTH GLOBE HERO -->
+<section class="relative w-full min-h-[calc(100vh-4.5rem)] flex flex-col justify-between items-center pt-unit-8 pb-unit-10 px-grid-margin overflow-hidden border-b border-stone-border bg-transparent" id="hero">
+<!-- Structural Boundary Accents (Architectural Corner Markers) -->
+<div class="absolute top-4 left-6 pointer-events-none z-30 font-label-code text-[10px] text-stone-subtle uppercase tracking-widest flex items-center space-x-2">
+<span class="inline-block w-2 h-2 border-t border-l border-emerald-brand"></span>
+<span class="">ORBITAL_SECTOR: S-AMERICA // EQUATORIAL CANOPY</span>
+</div>
+<div class="absolute top-4 right-6 pointer-events-none z-30 font-label-code text-[10px] text-stone-subtle uppercase tracking-widest flex items-center space-x-2">
+<span class="">VOXEL_SCALE: 0.125m³</span>
+<span class="inline-block w-2 h-2 border-t border-r border-emerald-brand"></span>
+</div>
+<!-- Hero Header & Ultra-Clean Geometric Sans Identity Title -->
+<div class="relative z-30 text-center max-w-4xl mx-auto mt-2">
+<div class="inline-flex items-center space-x-unit-2 border border-emerald-brand/40 px-3 py-1 bg-cream-surface mb-unit-4 shadow-[2px_2px_0px_0px_#10B981]">
+<span class="font-label-code text-[11px] font-bold tracking-widest text-stone-dark uppercase">VOXELIZED BIOMASS INVENTORY SYSTEM</span>
+</div>
+<h1 class="font-headline text-4xl sm:text-6xl md:text-7xl font-extrabold text-stone-dark tracking-tight leading-[1.08] select-none">
+          Evaluate Your Land for Carbon Investment.
+        </h1>
+<p class="font-label-code text-sm text-stone-subtle tracking-wider mt-unit-3">
+          Discover how much your land could earn by planting forests.
+        </p>
+</div>
+<!-- Interactive 3D Earth Globe Visualization (Emerald Green & Forest Slate Telemetry Data) -->
+<div class="relative w-full max-w-5xl my-auto py-unit-2 z-20 flex items-center justify-center">
+<!-- Telemetry Reticle Frame around Globe -->
+<div class="absolute inset-0 pointer-events-none border border-stone-border/70 z-20 flex flex-col justify-between p-3">
+<div class="flex justify-between font-label-code text-[9px] text-stone-subtle tracking-widest">
+<span class="bg-cream-surface/90 px-2 py-0.5 border border-stone-border flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-bright"></span>[ORBIT: GEOSYNC 12.4° W]
+            </span>
+<span class="bg-cream-surface/90 px-2 py-0.5 border border-stone-border text-emerald-brand font-bold">[SURFACE CARBON FLUX: 842.1 tCO2e]</span>
+</div>
+<!-- Center crosshair markers -->
+<div class="flex justify-between items-center pointer-events-none px-2 opacity-60">
+<span class="text-[9px] font-label-code text-stone-subtle">+ LAT 00° 00' 00"</span>
+<span class="text-[9px] font-label-code text-stone-subtle">LON 00° 00' 00" +</span>
+</div>
+<div class="flex justify-between font-label-code text-[9px] text-stone-subtle tracking-widest">
+<span class="bg-cream-surface/90 px-2 py-0.5 border border-stone-border text-stone-dark">[ECOLOGICAL NODES: 2,490 ACTIVE]</span>
+<span class="bg-cream-surface/90 px-2 py-0.5 border border-emerald-brand/50 text-emerald-brand font-semibold">[AOI: AMAZON BASIN POLYGON]</span>
+</div>
+</div>
+<!-- WebGL 3D Earth Globe Container -->
+<div class="w-full h-[500px] max-w-5xl mx-auto relative flex items-center justify-center" id="globe-container">
+<canvas class="w-full h-full block" id="globe-canvas" width="1548" height="756" style="width: 1024px; height: 500px;"></canvas>
+
+</div>
+</div>
+<!-- Hero Base Coordinate HUD & Metrics -->
+<div class="w-full max-w-5xl z-30 flex justify-center py-6 bg-cream-surface border border-stone-border shadow-sm">
+  <button id="carbon-credits-btn" class="bg-emerald-brand hover:bg-emerald-700 text-white font-bold py-3 px-8 shadow-[4px_4px_0px_0px_#064e3b] transition-transform active:translate-y-1 active:shadow-[1px_1px_0px_0px_#064e3b] font-label-code tracking-wider flex items-center gap-2">
+    <span class="material-symbols-outlined">eco</span>
+    HOW TO EARN THROUGH CARBON CREDITS?
+  </button>
+</div>
+<!-- Bottom Coordinate Anchors -->
+<div class="w-full flex justify-between items-center text-stone-subtle font-label-code text-[10px] pt-unit-4 tracking-widest max-w-5xl">
+<span class="">[SYS_CLK: 14:22:08 UTC]</span>
+
+<span class="">[CRC32: 0x88F10A]</span>
+</div>
+</section>
+<!-- SECTION 2: SCROLL NARRATIVE & 3-STEP INSTRUCTION WORKFLOW -->
+<section class="w-full max-w-[1440px] px-grid-margin py-unit-20 flex flex-col items-center justify-center relative border-b border-stone-border" id="workflow">
+<!-- Architectural Background Line -->
+<div class="absolute inset-y-0 left-1/2 w-px bg-stone-border/40 pointer-events-none -translate-x-1/2"></div>
+
+<!-- Clean Contemporary Narrative Statement -->
+<div class="relative z-10 max-w-3xl mx-auto text-center px-4 mb-unit-12">
+<p class="font-headline text-xl sm:text-2xl md:text-3xl text-stone-dark font-semibold leading-snug tracking-tight">
+        This platform analyzes local soil and climate data to recommend profitable plantation strategies. Enter your exact location below to generate a 10-year carbon sequestration and ROI blueprint.
+      </p>
+
+</div>
+<!-- Structured 3-Step Instruction Guide Workflow Card Deck -->
+<div class="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-unit-6">
+<!-- Step 01 -->
+<div class="bg-cream-surface border-2 border-stone-dark p-unit-6 relative group hover:border-emerald-brand transition-all duration-200 shadow-[3px_3px_0px_0px_#18181B] hover:shadow-[4px_4px_0px_0px_#059669]"><div class="flex justify-between items-center mb-unit-4 hairline-b pb-unit-3">
+<span class="font-label-code text-xs font-bold text-emerald-brand bg-emerald-subtle px-2.5 py-1 border border-emerald-bright/30">
+            STEP 01
+          </span>
+<span class="material-symbols-outlined text-stone-dark group-hover:text-emerald-brand transition-colors" data-icon="location_on">location_on</span>
+</div>
+<h3 class="font-headline text-base font-bold text-stone-dark mb-2 tracking-tight">
+          Locate Your Land
+        </h3>
+<p class="font-sans text-xs text-stone-subtle leading-relaxed">
+          Just type in your coordinates or drop a pin on the map. We’ll handle the boundary mapping and calculate the exact area for you.
+        </p></div>
+<!-- Step 02 -->
+<div class="bg-cream-surface border-2 border-stone-dark p-unit-6 relative group hover:border-emerald-brand transition-all duration-200 shadow-[3px_3px_0px_0px_#18181B] hover:shadow-[4px_4px_0px_0px_#059669]"><div class="flex justify-between items-center mb-unit-4 hairline-b pb-unit-3">
+<span class="font-label-code text-xs font-bold text-emerald-brand bg-emerald-subtle px-2.5 py-1 border border-emerald-bright/30">
+            STEP 02
+          </span>
+<span class="material-symbols-outlined text-stone-dark group-hover:text-emerald-brand transition-colors" data-icon="satellite_alt">satellite_alt</span>
+</div>
+<h3 class="font-headline text-base font-bold text-stone-dark mb-2 tracking-tight">
+          Analyze the Environment
+        </h3>
+<p class="font-sans text-xs text-stone-subtle leading-relaxed">
+          We automatically pull local historical weather, rainfall, and soil data for your exact spot to figure out which trees will grow best.
+        </p></div>
+<!-- Step 03 -->
+<div class="bg-cream-surface border-2 border-stone-dark p-unit-6 relative group hover:border-emerald-brand transition-all duration-200 shadow-[3px_3px_0px_0px_#18181B] hover:shadow-[4px_4px_0px_0px_#059669]"><div class="flex justify-between items-center mb-unit-4 hairline-b pb-unit-3">
+<span class="font-label-code text-xs font-bold text-emerald-brand bg-emerald-subtle px-2.5 py-1 border border-emerald-bright/30">
+            STEP 03
+          </span>
+<span class="material-symbols-outlined text-stone-dark group-hover:text-emerald-brand transition-colors" data-icon="analytics">analytics</span>
+</div>
+<h3 class="font-headline text-base font-bold text-stone-dark mb-2 tracking-tight">
+          Get Your 10-Year Plan
+        </h3>
+<p class="font-sans text-xs text-stone-subtle leading-relaxed">
+          See exactly what to plant, how much it will cost to start, and the total profit you can make from carbon credits over the next decade.
+        </p></div>
+</div>
+</section>
+<!-- SECTION 3: THE ACTION AREA & PRIMARY GET STARTED CTA -->
+<section class="w-full max-w-[1440px] px-grid-margin py-unit-24 flex flex-col items-center justify-center relative overflow-hidden" id="action-section">
+<!-- Technical HUD Corner Markers -->
+<div class="absolute top-8 left-12 font-label-code text-[10px] text-stone-subtle uppercase tracking-widest hidden md:block">
+        [DISPATCH_PROTOCOL: INITIALIZE_01]
+      </div>
+<div class="absolute bottom-8 right-12 font-label-code text-[10px] text-stone-subtle uppercase tracking-widest hidden md:block">
+        [STATUS: ZERO_VARIANCE_CALIBRATION]
+      </div>
+<div class="relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto w-full">
+<!-- Micro-Copy: Step 1 of 3 with Pulsing Emerald Indicator -->
+<div class="inline-flex items-center space-x-2.5 font-label-code text-xs font-semibold text-stone-dark uppercase tracking-wider mb-unit-6 px-unit-4 py-2 bg-cream-surface border border-emerald-brand/40 shadow-sm">
+<span class="">Step 1 of 3: Locate your plot to begin environmental analysis.</span>
+</div>
+<h2 class="font-headline text-3xl sm:text-4xl font-extrabold text-stone-dark mb-unit-3 tracking-tight">
+        Ready to Unlock Your Land’s Capital Potential?
+      </h2>
+<p class="font-sans text-stone-subtle text-sm max-w-lg mb-unit-8 leading-relaxed">
+        Initiate geospatial ingestion to access multi-spectral biomass calculations, native species recommendations, and projected yield models.
+      </p>
+<!-- Prominent Sharp Emerald Green CTA Button -->
+<div class="relative group">
+<!-- Button Hard Shadow Frame -->
+<div class="absolute inset-0 bg-stone-dark translate-x-1.5 translate-y-1.5 transition-transform duration-150 group-hover:translate-x-2.5 group-hover:translate-y-2.5"></div>
+<a class="relative inline-flex items-center justify-center space-x-3 bg-emerald-brand hover:bg-[#047857] text-white px-unit-12 py-unit-4 font-action-cta text-base font-bold uppercase tracking-wider border-2 border-stone-dark transition-all duration-150 text-center cursor-pointer shadow-lg" href="page2.html" id="primary-cta">
+<span class="">GET STARTED</span>
+<span class="material-symbols-outlined text-lg font-bold text-white transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<!-- Institutional reassurance micro-copy below CTA -->
+<div class="mt-unit-6 flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-unit-4 text-[11px] font-label-code text-stone-subtle">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-bright"></span>
+          NO CREDIT CARD REQUIRED
+        </span>
+<span class="hidden sm:inline text-stone-border">|</span>
+<span class="">INSTANT VECTOR MAPPING</span>
+
+</div>
+</div>
+</section>
+</main>
+<!-- Clean Minimalist Institutional Footer -->
+<footer class="bg-cream-surface text-stone-dark font-label-code text-xs border-t border-stone-border docked full-width bottom z-30">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-grid-margin py-unit-8 max-w-[1440px] mx-auto gap-unit-4">
+<!-- Brand & Copyright -->
+<div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-unit-4 text-center md:text-left">
+<div class="flex items-center space-x-2">
+<div class="w-4 h-4 bg-emerald-brand"></div>
+<span class="font-headline text-sm text-stone-dark uppercase font-extrabold tracking-tight">
+            TERRAVOXEL
+          </span>
+</div>
+<span class="hidden md:inline-block text-stone-border">|</span>
+<span class="text-stone-subtle text-[11px]">
+          © 2025 TERRAVOXEL INSTITUTIONAL BIOMASS TELEMETRY. ZERO-VARIANCE VERIFIED REPOSITORY.
+        </span>
+</div>
+<!-- Links Array -->
+<div class="flex flex-wrap justify-center items-center gap-unit-6 text-center text-[11px]">
+<a class="text-stone-subtle hover:text-emerald-brand font-label-code uppercase tracking-wider transition-colors" href="#">
+          AOI Protocol
+        </a>
+<a class="text-stone-subtle hover:text-emerald-brand font-label-code uppercase tracking-wider transition-colors" href="#">
+          LiDAR Core Spec
+        </a>
+<a class="text-stone-subtle hover:text-emerald-brand font-label-code uppercase tracking-wider transition-colors" href="#">
+          Registry API
+        </a>
+<a class="text-stone-subtle hover:text-emerald-brand font-label-code uppercase tracking-wider transition-colors" href="#">
+          Cryptographic Ledger
+        </a>
+<a class="text-stone-subtle hover:text-emerald-brand font-label-code uppercase tracking-wider transition-colors" href="#">
+          Privacy Terms
+        </a>
+</div>
+</div>
+</footer>
+<!-- INTERACTIVE 3D EARTH GLOBE SCRIPT (THREE.JS - CRISP EMERALD GREEN & FOREST SLATE TELEMETRY DATA) -->
+<script>
+  (function() {
+    const container = document.getElementById('globe-container');
+    const canvas = document.getElementById('globe-canvas');
+    if (!container || !canvas || typeof THREE === 'undefined') return;
+
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+    camera.position.z = 230;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Root globe group
+    const globeGroup = new THREE.Group();
+    scene.add(globeGroup);
+    globeGroup.rotation.x = 0.22; // Natural axial tilt
+
+    const GLOBE_RADIUS = 70;
+
+    // 1. Base Core Ocean Sphere (Translucent soothing pale sage/alabaster with light tint)
+    const oceanGeo = new THREE.SphereGeometry(GLOBE_RADIUS - 0.2, 64, 64);
+    const oceanMat = new THREE.MeshBasicMaterial({
+      color: 0xFAFDF9,
+      transparent: true,
+      opacity: 0.82
+    });
+    const oceanSphere = new THREE.Mesh(oceanGeo, oceanMat);
+    globeGroup.add(oceanSphere);
+
+    // Inner depth layer (Subtle soft green wireframe)
+    const oceanGlowGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 0.1, 48, 48);
+    const oceanGlowMat = new THREE.MeshBasicMaterial({
+      color: 0xD1E2CF,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.25
+    });
+    const oceanGlow = new THREE.Mesh(oceanGlowGeo, oceanGlowMat);
+    globeGroup.add(oceanGlow);
+
+    // 2. Latitude & Longitude Grids (Clean sage slate telemetry lines)
+    const latLongMat = new THREE.LineBasicMaterial({
+      color: 0xBDD2BB,
+      transparent: true,
+      opacity: 0.55
+    });
+
+    // Latitude rings
+    for (let lat = -60; lat <= 60; lat += 20) {
+      const radius = GLOBE_RADIUS * Math.cos((lat * Math.PI) / 180);
+      const y = GLOBE_RADIUS * Math.sin((lat * Math.PI) / 180);
+      const ringGeo = new THREE.BufferGeometry();
+      const points = [];
+      const segments = 90;
+      for (let i = 0; i <= segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        points.push(new THREE.Vector3(Math.cos(theta) * radius, y, Math.sin(theta) * radius));
+      }
+      ringGeo.setFromPoints(points);
+      const line = new THREE.Line(ringGeo, latLongMat);
+      globeGroup.add(line);
+    }
+
+    // Longitude meridians
+    for (let lng = 0; lng < 180; lng += 30) {
+      const ringGeo = new THREE.BufferGeometry();
+      const points = [];
+      const segments = 90;
+      const radLng = (lng * Math.PI) / 180;
+      for (let i = 0; i <= segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        const x = GLOBE_RADIUS * Math.sin(theta) * Math.cos(radLng);
+        const y = GLOBE_RADIUS * Math.cos(theta);
+        const z = GLOBE_RADIUS * Math.sin(theta) * Math.sin(radLng);
+        points.push(new THREE.Vector3(x, y, z));
+      }
+      ringGeo.setFromPoints(points);
+      const line = new THREE.Line(ringGeo, latLongMat);
+      globeGroup.add(line);
+    }
+
+    // 3. Realistic Continent Landmasses in Crisp, Vibrant Emerald Green & Deep Forest Slate
+    const landCoords = [];
+    function addLandRegion(centerLat, centerLng, latRadius, lngRadius, count, isTropical = false) {
+      for (let i = 0; i < count; i++) {
+        const u = Math.random();
+        const v = Math.random();
+        const lat = centerLat + (u - 0.5) * latRadius * 2 * (0.8 + 0.25 * Math.sin(v * Math.PI));
+        const lng = centerLng + (v - 0.5) * lngRadius * 2 * (0.8 + 0.25 * Math.cos(u * Math.PI));
+        landCoords.push({ lat, lng, isTropical });
+      }
+    }
+
+    // Continents
+    addLandRegion(-12, -60, 24, 18, 550, true);
+    addLandRegion(14, -85, 8, 12, 160, true);
+    addLandRegion(40, -100, 22, 32, 500, false);
+    addLandRegion(52, 55, 20, 55, 750, false);
+    addLandRegion(0, 22, 16, 18, 380, true);
+    addLandRegion(18, 18, 12, 28, 260, false);
+    addLandRegion(-22, 26, 12, 16, 220, false);
+    addLandRegion(4, 112, 14, 26, 420, true);
+    addLandRegion(-24, 134, 16, 20, 280, false);
+
+    const landGeometry = new THREE.BufferGeometry();
+    const positions = [];
+    const colors = [];
+
+    // Distinct emerald green & forest slate palette - completely eliminating white-on-white
+    const greenEmeraldBright = new THREE.Color(0x10B981); // Bright vibrant emerald
+    const greenEmeraldBrand  = new THREE.Color(0x059669); // Rich telemetry emerald
+    const greenForestSlate   = new THREE.Color(0x064E3B); // Deep forest green
+    const slateDarkAccent    = new THREE.Color(0x0F172A); // High-contrast deep slate
+
+    landCoords.forEach(pt => {
+      const phi = (90 - pt.lat) * (Math.PI / 180);
+      const theta = (pt.lng + 180) * (Math.PI / 180);
+      const r = GLOBE_RADIUS + 0.6;
+
+      const x = -(r * Math.sin(phi) * Math.cos(theta));
+      const z = r * Math.sin(phi) * Math.sin(theta);
+      const y = r * Math.cos(phi);
+
+      positions.push(x, y, z);
+
+      const rand = Math.random();
+      if (pt.isTropical) {
+        if (rand > 0.45) {
+          colors.push(greenEmeraldBright.r, greenEmeraldBright.g, greenEmeraldBright.b);
+        } else if (rand > 0.15) {
+          colors.push(greenEmeraldBrand.r, greenEmeraldBrand.g, greenEmeraldBrand.b);
+        } else {
+          colors.push(greenForestSlate.r, greenForestSlate.g, greenForestSlate.b);
+        }
+      } else {
+        if (rand > 0.5) {
+          colors.push(greenEmeraldBrand.r, greenEmeraldBrand.g, greenEmeraldBrand.b);
+        } else if (rand > 0.25) {
+          colors.push(greenForestSlate.r, greenForestSlate.g, greenForestSlate.b);
+        } else {
+          colors.push(slateDarkAccent.r, slateDarkAccent.g, slateDarkAccent.b);
+        }
+      }
+    });
+
+    landGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    landGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const landMaterial = new THREE.PointsMaterial({
+      size: 3.2,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.96
+    });
+    const landPoints = new THREE.Points(landGeometry, landMaterial);
+    globeGroup.add(landPoints);
+
+    // 4. Luminous Atmospheric Rim & Soft Halo with gentle emerald reflection
+    const atmoGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 3.5, 48, 48);
+    const atmoMat = new THREE.MeshBasicMaterial({
+      color: 0x10B981,
+      transparent: true,
+      opacity: 0.16,
+      side: THREE.BackSide
+    });
+    const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
+    scene.add(atmoMesh);
+
+    const outerGlowGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 8.5, 32, 32);
+    const outerGlowMat = new THREE.MeshBasicMaterial({
+      color: 0x34D399,
+      transparent: true,
+      opacity: 0.08,
+      side: THREE.BackSide
+    });
+    const outerGlow = new THREE.Mesh(outerGlowGeo, outerGlowMat);
+    scene.add(outerGlow);
+
+    // 5. High-Contrast Vibrant Emerald & Dark Beacon Telemetry Nodes
+    const telemetrySites = [
+      { lat: -3.46, lng: -62.21, name: "Amazon Basin", val: "842 tCO2e" },
+      { lat: -0.22, lng: 18.24, name: "Congo Basin", val: "710 tCO2e" },
+      { lat: -2.53, lng: 115.54, name: "Borneo Peat", val: "680 tCO2e" },
+      { lat: 45.42, lng: -75.69, name: "Boreal Ontario", val: "320 tCO2e" },
+      { lat: 37.77, lng: -122.41, name: "Redwood Corridor", val: "510 tCO2e" },
+      { lat: -18.20, lng: -47.00, name: "Cerrado Biome", val: "430 tCO2e" },
+      { lat: 12.56, lng: 104.99, name: "Mekong Delta", val: "490 tCO2e" }
+    ];
+
+    const nodeGroup = new THREE.Group();
+    globeGroup.add(nodeGroup);
+    const activeNodePos = [];
+    const pulseRings = [];
+
+    telemetrySites.forEach(site => {
+      const phi = (90 - site.lat) * (Math.PI / 180);
+      const theta = (site.lng + 180) * (Math.PI / 180);
+      const r = GLOBE_RADIUS + 1.2;
+
+      const x = -(r * Math.sin(phi) * Math.cos(theta));
+      const z = r * Math.sin(phi) * Math.sin(theta);
+      const y = r * Math.cos(phi);
+
+      activeNodePos.push(new THREE.Vector3(x, y, z));
+
+      // Solid emerald center pin with high visibility dark border core
+      const pinGeo = new THREE.SphereGeometry(1.9, 14, 14);
+      const pinMat = new THREE.MeshBasicMaterial({ color: 0x10B981 });
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.position.set(x, y, z);
+      nodeGroup.add(pin);
+
+      // Deep slate core accent
+      const pinCoreGeo = new THREE.SphereGeometry(0.85, 10, 10);
+      const pinCoreMat = new THREE.MeshBasicMaterial({ color: 0x064E3B });
+      const pinCore = new THREE.Mesh(pinCoreGeo, pinCoreMat);
+      pinCore.position.set(x * 1.01, y * 1.01, z * 1.01);
+      nodeGroup.add(pinCore);
+
+      // Outer vibrant pulse disc
+      const ringGeo = new THREE.RingGeometry(2.4, 3.8, 24);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x059669,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.85
+      });
+      const pulseRing = new THREE.Mesh(ringGeo, ringMat);
+      pulseRing.position.set(x * 1.015, y * 1.015, z * 1.015);
+      pulseRing.lookAt(0, 0, 0);
+      nodeGroup.add(pulseRing);
+      pulseRings.push(pulseRing);
+    });
+
+    // 6. Vibrant Emerald & Forest Telemetry Great Circle Arcs
+    function createGreatCircleArc(v1, v2, colorHex = 0x10B981) {
+      const mid = v1.clone().add(v2).multiplyScalar(0.5);
+      const dist = v1.distanceTo(v2);
+      mid.normalize().multiplyScalar(GLOBE_RADIUS + dist * 0.26);
+
+      const curve = new THREE.QuadraticBezierCurve3(v1, mid, v2);
+      const points = curve.getPoints(60);
+      const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const arcMat = new THREE.LineBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity: 0.88,
+        linewidth: 2
+      });
+      return new THREE.Line(arcGeo, arcMat);
+    }
+
+    if (activeNodePos.length >= 4) {
+      globeGroup.add(createGreatCircleArc(activeNodePos[0], activeNodePos[1], 0x10B981)); // Amazon -> Congo
+      globeGroup.add(createGreatCircleArc(activeNodePos[1], activeNodePos[2], 0x059669)); // Congo -> Borneo
+      globeGroup.add(createGreatCircleArc(activeNodePos[0], activeNodePos[4], 0x047857)); // Amazon -> Redwood
+      globeGroup.add(createGreatCircleArc(activeNodePos[2], activeNodePos[6], 0x10B981)); // Borneo -> Mekong
+    }
+
+    // 7. Outer Telemetry Orbital Ring (Subtle emerald/forest telemetry ring)
+    const orbitalGeo = new THREE.BufferGeometry();
+    const orbPoints = [];
+    for (let i = 0; i <= 140; i++) {
+      const theta = (i / 140) * Math.PI * 2;
+      orbPoints.push(new THREE.Vector3(Math.cos(theta) * (GLOBE_RADIUS + 14), 0, Math.sin(theta) * (GLOBE_RADIUS + 14)));
+    }
+    orbitalGeo.setFromPoints(orbPoints);
+    const orbitalRing = new THREE.Line(
+      orbitalGeo,
+      new THREE.LineBasicMaterial({ color: 0x059669, transparent: true, opacity: 0.45 })
+    );
+    orbitalRing.rotation.x = Math.PI / 3.2;
+    orbitalRing.rotation.z = Math.PI / 7;
+    globeGroup.add(orbitalRing);
+
+    // 8. Interactive Drag & Inertia
+    let isDragging = false;
+    let prevMouse = { x: 0, y: 0 };
+    let velX = 0;
+    let velY = 0;
+
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      prevMouse = { x: e.clientX, y: e.clientY };
+      velX = 0;
+      velY = 0;
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaX = e.clientX - prevMouse.x;
+      const deltaY = e.clientY - prevMouse.y;
+      velX = deltaX * 0.005;
+      velY = deltaY * 0.005;
+      globeGroup.rotation.y += velX;
+      globeGroup.rotation.x += velY;
+      prevMouse = { x: e.clientX, y: e.clientY };
+    });
+
+    // Touch support for mobile
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        velX = 0;
+        velY = 0;
+      }
+    });
+    window.addEventListener('touchend', () => { isDragging = false; });
+    window.addEventListener('touchmove', (e) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      const deltaX = e.touches[0].clientX - prevMouse.x;
+      const deltaY = e.touches[0].clientY - prevMouse.y;
+      velX = deltaX * 0.006;
+      velY = deltaY * 0.006;
+      globeGroup.rotation.y += velX;
+      globeGroup.rotation.x += velY;
+      prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    });
+
+    // Render loop with smooth continuous rotation & momentum decay
+    let clock = 0;
+    function animate() {
+      requestAnimationFrame(animate);
+      clock += 0.03;
+      if (!isDragging) {
+        globeGroup.rotation.y += 0.0028 + velX;
+        globeGroup.rotation.x += velY;
+        velX *= 0.92;
+        velY *= 0.92;
+      }
+      // Subtle rhythmic beacon pulse
+      pulseRings.forEach((ring, idx) => {
+        const s = 1 + 0.18 * Math.sin(clock + idx * 0.8);
+        ring.scale.set(s, s, s);
+      });
+      orbitalRing.rotation.z += 0.0012;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Window resize handler
+    window.addEventListener('resize', () => {
+      if (!container) return;
+      width = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+  })();
+
+  // Primary CTA smooth scroll / action binding
+  document.addEventListener('DOMContentLoaded', () => {
+    // Navigated directly via href="page2.html"
+  });
+</script>
+
+
+<!-- Carbon Credits Modal -->
+<div id="carbon-modal-overlay" class="fixed inset-0 z-[100] hidden flex items-center justify-center pointer-events-none">
+  <!-- Canvas for Leaves -->
+  <canvas id="leaves-canvas" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+  
+  <!-- Text Content -->
+  <div id="carbon-modal-content" class="relative z-10 w-full max-w-3xl flex flex-col justify-center items-center text-center p-8 transition-opacity duration-1000 opacity-0 pointer-events-auto">
+    <h2 class="text-4xl font-bold text-white font-headline mb-6 tracking-tight drop-shadow-md">How Carbon Credits Actually Work</h2>
+    <div class="text-white/95 text-lg leading-relaxed space-y-4 bg-emerald-950/80 p-10 backdrop-blur-md border border-emerald-400/40 shadow-2xl font-sans text-left">
+      <p>It’s a pretty straightforward exchange. Trees naturally pull carbon pollution out of the air as they grow. When you plant trees on empty or degraded land, you earn <strong>"carbon credits"</strong> based on how much carbon your new forest captures. Big companies that can't easily reduce their own pollution will buy these credits from you to balance things out. Basically, you get paid to restore the environment.</p>
+      
+      <p class="font-bold text-emerald-200 text-2xl pt-4">What You Can Do Today</p>
+      <p>Right now, you can find out if your empty land is a good fit. Just enter your location, and our tool will check the local soil and weather to tell you exactly what kind of trees to plant, how much it will cost to get started, and the potential profit you could make over the next decade.</p>
+    </div>
+    <button id="carbon-modal-close" class="mt-8 border border-white bg-emerald-900/40 backdrop-blur-sm text-white px-8 py-3 font-label-code text-xs tracking-wider hover:bg-white hover:text-emerald-brand transition-colors font-bold shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] hover:shadow-none hover:translate-y-1 hover:translate-x-1">
+      ACKNOWLEDGE & CLOSE
+    </button>
+  </div>
+</div>
+
+<script>
+  // Leaves Animation System for Carbon Modal
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('leaves-canvas');
+    const ctx = canvas.getContext('2d');
+    const modalOverlay = document.getElementById('carbon-modal-overlay');
+    const modalContent = document.getElementById('carbon-modal-content');
+    const openBtn = document.getElementById('carbon-credits-btn');
+    const closeBtn = document.getElementById('carbon-modal-close');
+
+    let particles = [];
+    let animState = 'IDLE'; // IDLE, FORMING, FORMED, DISSOLVING
+    let cw, ch;
+    
+    // The target rectangle shape for leaves to form the background
+    let modalRect = { x: 0, y: 0, w: 840, h: 540 };
+
+    function resize() {
+      cw = canvas.width = window.innerWidth;
+      ch = canvas.height = window.innerHeight;
+      modalRect.x = cw / 2 - modalRect.w / 2;
+      modalRect.y = ch / 2 - modalRect.h / 2;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Leaf {
+      constructor() {
+        this.reset(true);
+      }
+      
+      reset(initial = false) {
+        // Start randomly across the top, or above the screen if initial
+        this.x = Math.random() * cw;
+        this.y = initial ? -Math.random() * ch - 100 : -50;
+        
+        // Random falling velocities
+        this.vx = (Math.random() - 0.5) * 3;
+        this.vy = Math.random() * 2 + 2;
+        
+        // Leaf properties
+        this.size = Math.random() * 15 + 8;
+        this.angle = Math.random() * Math.PI * 2;
+        this.spin = (Math.random() - 0.5) * 0.15;
+        
+        // Various emerald and forest green shades
+        const greens = ['#059669', '#047857', '#064e3b', '#10b981', '#34d399'];
+        this.color = greens[Math.floor(Math.random() * greens.length)];
+        this.opacity = Math.random() * 0.4 + 0.6; // 0.6 to 1.0 opacity
+        
+        // Target position to form the modal block
+        this.targetX = modalRect.x + Math.random() * modalRect.w;
+        this.targetY = modalRect.y + Math.random() * modalRect.h;
+        this.inPosition = false;
+      }
+
+      update() {
+        if (animState === 'FORMING') {
+          const dx = this.targetX - this.x;
+          const dy = this.targetY - this.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          
+          if (dist > 15) {
+            // Easing towards the target slower
+            this.x += dx * 0.02;
+            this.y += dy * 0.02;
+            this.angle += this.spin;
+          } else {
+            this.inPosition = true;
+          }
+        } else if (animState === 'DISSOLVING') {
+          this.inPosition = false;
+          // Apply gravity and wind
+          this.vy += 0.05; 
+          this.x += this.vx + Math.sin(this.y * 0.01) * 2; // Fluttering wind effect
+          this.y += this.vy;
+          this.angle += this.spin * 1.5;
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.fillStyle = this.color;
+        
+        // Draw a leaf shape (pointed ellipse)
+        ctx.beginPath();
+        ctx.moveTo(0, -this.size);
+        ctx.quadraticCurveTo(this.size, 0, 0, this.size);
+        ctx.quadraticCurveTo(-this.size, 0, 0, -this.size);
+        ctx.fill();
+        
+        ctx.restore();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      // 1800 leaves creates a dense background block for the larger modal
+      for (let i = 0; i < 1800; i++) {
+        particles.push(new Leaf());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, cw, ch);
+      
+      let allInPosition = true;
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+        if (!p.inPosition) allInPosition = false;
+      });
+      
+      if (animState === 'FORMING' && allInPosition) {
+        animState = 'FORMED';
+        // Fade in the text once the leaves have formed the shape
+        modalContent.style.opacity = 1;
+      }
+      
+      if (animState !== 'IDLE') {
+        requestAnimationFrame(animate);
+      }
+    }
+
+    if(openBtn) {
+      openBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        animState = 'FORMING';
+        modalOverlay.classList.remove('hidden');
+        modalContent.style.opacity = 0;
+        initParticles();
+        animate();
+      });
+    }
+
+    if(closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        animState = 'DISSOLVING';
+        modalContent.style.opacity = 0;
+        
+        // Wait 2.5 seconds for particles to fall, then reset
+        setTimeout(() => {
+          animState = 'IDLE';
+          modalOverlay.classList.add('hidden');
+          ctx.clearRect(0, 0, cw, ch); // Clear any remaining stragglers
+        }, 2500);
+      });
+    }
+  });
+</script>
+</body>
+</html>

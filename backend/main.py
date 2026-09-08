@@ -4,11 +4,14 @@ from models.predictor import TreePredictor
 
 from services.tree_data import TreeData
 
-from services.calculator import (
+from services.carbon import (
+    calculate_single_tree_carbon,
+    calculate_total_carbon
+)
+
+from services.financial import (
     calculate_tree_capacity,
     calculate_budget_capacity,
-    calculate_single_tree_co2,
-    calculate_total_carbon,
     calculate_financials
 )
 
@@ -37,7 +40,6 @@ def add_cors_headers(response):
 predictor = TreePredictor(
     "datas.csv"
 )
-
 
 tree_data = TreeData(
     "tree_data.csv"
@@ -76,7 +78,6 @@ def predict():
     land_status = data[
         "land_status"
     ]
-
 
     available_acres = float(
         data["available_acres"]
@@ -136,9 +137,9 @@ def predict():
         ]
     )
 
-    co2_per_m2 = float(
+    carbon_absorption_per_m2 = float(
         selected_tree[
-            "annual_co2_per_m2_canopy_kg"
+            "carbon_absorption_kg_per_m2"
         ]
     )
 
@@ -149,21 +150,17 @@ def predict():
     )
 
 
-    budget_capacity = calculate_budget_capacity(
+    trees_by_land = land_capacity[
+        "trees_by_land"
+    ]
+
+
+    trees_by_budget = calculate_budget_capacity(
         total_budget,
         cost_per_tree,
         annual_maintenance,
         years
     )
-
-
-    trees_by_land = land_capacity[
-        "trees_by_land"
-    ]
-
-    trees_by_budget = budget_capacity[
-        "trees_by_budget"
-    ]
 
 
     number_of_trees = min(
@@ -188,38 +185,36 @@ def predict():
 
     land_used_acres = (
         land_used_m2
-        / ACRE_TO_M2
+        / 4046.86
     )
 
 
-    single_tree_co2 = (
-        calculate_single_tree_co2(
+    single_tree_carbon = (
+        calculate_single_tree_carbon(
             canopy_area,
-            co2_per_m2
+            carbon_absorption_per_m2
         )
     )
 
 
     total_carbon = (
         calculate_total_carbon(
-            single_tree_co2,
+            single_tree_carbon,
             number_of_trees,
             years
         )
     )
 
 
-    financials = (
-        calculate_financials(
-            number_of_trees,
-            cost_per_tree,
-            annual_maintenance,
-            years,
-            total_carbon[
-                "carbon_credits"
-            ],
-            credit_price
-        )
+    financials = calculate_financials(
+        number_of_trees,
+        cost_per_tree,
+        annual_maintenance,
+        years,
+        total_carbon[
+            "carbon_credits"
+        ],
+        credit_price
     )
 
 
@@ -235,7 +230,6 @@ def predict():
 
         "recommended_tree":
             tree,
-
 
         "years":
             years,
@@ -255,16 +249,10 @@ def predict():
         "canopy_area_m2":
             canopy_area,
 
-        "trees_by_acre":
-            land_capacity[
-                "trees_by_land"
-            ]
-            / available_acres,
-
-        "trees_by_land":
+        "trees_possible_from_land":
             trees_by_land,
 
-        "trees_by_budget":
+        "trees_possible_from_budget":
             trees_by_budget,
 
         "final_number_of_trees":
@@ -297,17 +285,17 @@ def predict():
 
 
         "single_tree_daily_co2_kg":
-            single_tree_co2[
+            single_tree_carbon[
                 "daily_co2_kg"
             ],
 
         "single_tree_annual_co2_kg":
-            single_tree_co2[
+            single_tree_carbon[
                 "annual_co2_kg"
             ],
 
         "single_tree_annual_carbon_kg":
-            single_tree_co2[
+            single_tree_carbon[
                 "annual_carbon_kg"
             ],
 
