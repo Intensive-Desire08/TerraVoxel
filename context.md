@@ -474,13 +474,16 @@ The React build uses the Alabaster Voxel theme (§3.5) with Paprika + JetBrains 
 
 ---
 
-## 10. Backend API Stubs (stubbed during dev)
+## 10. Backend API Contract
 
+```text
+POST /api/v1/projects/predict               -> Generates prediction & project_id from Parameter Terminal
+GET  /api/v1/projects/{project_id}/species-plan  -> Input 3 JSON (for 3D Scene)
+GET  /api/v1/projects/{project_id}/metadata      -> Input 2 JSON (for 3D Scene)
+POST /api/v1/projects/{project_id}/tree-positions <- Output 1 JSON (from 3D Scene)
 ```
-GET  /api/v1/projects/{project_id}/species-plan  -> Input 3 JSON
-GET  /api/v1/projects/{project_id}/metadata      -> Input 2 JSON
-POST /api/v1/projects/{project_id}/tree-positions <- Output 1 JSON
-```
+
+*Note: The backend currently uses an in-memory dictionary to store `project_id` state across requests. This avoids heavy DB dependencies during the prototype phase.*
 
 ---
 
@@ -491,3 +494,4 @@ POST /api/v1/projects/{project_id}/tree-positions <- Output 1 JSON
 | 2026-09-07 | Initial context file created. Directory structure planned. |
 | 2026-09-07 | **Alabaster Voxel** theme spec added (§3.5). Replaced dark emerald palette with light canvas + Minecraft-shader lighting. Corrected `poisson-disk-sampling` package name. |
 | 2026-09-07 | Phase 0 & 1 complete. `theme.css` rewritten to Alabaster Voxel. `globals.css`, Redux store, `useLocalStorage`, `main.jsx`, `AppRoutes.jsx` all implemented. Directory tree reformatted with ✅/📄 status markers. Documented pre-existing design reference files (`page1.html`, `page2.html`, `DESIGN*.md`, screenshots). Renumbered phases: Phase 2 = Polygon Drawer, Phase 3 = 3D Viz. |
+| 2026-09-08 | Backend APIs aligned with frontend requirements. Added `POST /api/v1/projects/predict` and in-memory persistence layer. |

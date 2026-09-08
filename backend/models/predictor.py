@@ -21,7 +21,7 @@ class TreePredictor:
         self.encoder = LabelEncoder()
 
         self.y = self.encoder.fit_transform(
-            self.df["recommendedtrees"]
+            self.df["recommended_crop"]
         )
 
         self.model = DecisionTreeClassifier(
